@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AM Store - متجر حسابات بيس موبايل</title>
+    <title>A&M Store - متجر حسابات بيس موبايل</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -65,16 +65,17 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('store')">
                 <i class="fa-solid fa-futbol text-accentGreen text-3xl animate-spin" style="animation-duration: 10s;"></i>
-                <span class="text-xl font-black tracking-wider text-white">AM Store <span class="text-accentGreen text-xs font-semibold">AM SHOP</span></span>
+                <span class="text-xl font-black tracking-wider text-white">A&M Store <span class="text-accentGreen text-xs font-semibold">A&M SHOP</span></span>
             </div>
             
             <nav class="flex items-center gap-1 sm:gap-3 flex-wrap">
                 <button onclick="switchTab('store')" id="btnStore" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-store"></i> <span data-translate="store">المتجر</span>
                 </button>
-                <button onclick="switchTab('warranty')" id="btnWarranty" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5">
+                <!-- زر الضمان (رابط فيسبوك يظهر للجميع) -->
+                <a id="warrantyBtn" href="#" target="_blank" class="hidden px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-shield-halved text-accentBlue"></i> <span>الضمان</span>
-                </button>
+                </a>
                 <button onclick="switchTab('support')" id="btnSupport" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-headset"></i> <span data-translate="support">الأدمن</span>
                 </button>
@@ -126,45 +127,36 @@
             <div id="paginationControls" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
         </section>
 
-        <!-- صفحة الضمان -->
-        <section id="warrantyTab" class="hidden max-w-3xl mx-auto space-y-4">
-            <div class="bg-cardBg/90 backdrop-blur p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-                <h3 class="text-2xl font-black text-accentBlue flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> ضمان AM Store</h3>
-                <div id="warrantyContent" class="text-slate-300 text-sm leading-relaxed space-y-3 whitespace-pre-line">
-                    جاري تحميل تفاصيل الضمان والأمان...
-                </div>
-                <div id="warrantyAdminEditContainer" class="hidden pt-4 border-t border-slate-800">
-                    <h4 class="text-amber-400 font-bold text-sm mb-2">تعديل محتوى الضمان (للأدمن فقط):</h4>
-                    <textarea id="warrantyEditText" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500 mb-2"></textarea>
-                    <button onclick="saveWarrantyContent()" class="bg-amber-600 hover:bg-amber-500 px-5 py-2.5 rounded-xl text-white font-bold text-xs transition">حفظ التعديلات</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- صفحة عرض حساب للعملاء -->
+        <!-- صفحة عرض حساب للعملاء (بدون خانة اسم الحساب) -->
         <section id="submitOfferTab" class="hidden max-w-xl mx-auto space-y-4">
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold text-lg mb-2 text-blue-400 flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i> عرض حسابك للبيع في المتجر</h3>
-                <p class="text-xs text-slate-400 mb-4">املأ بيانات حسابك وارفع الصور (من 1 إلى 4 صور) والفيديوهات ليتم مراجعتها ونشرها من قبل الأدمن.</p>
+                <p class="text-xs text-slate-400 mb-4">املأ تفاصيل الحساب وارفع الصور والفيديوهات ليتم مراجعتها ونشرها من قبل الأدمن.</p>
                 <form id="submitOfferForm" onsubmit="submitUserOffer(event)" class="space-y-3">
-                    <input type="text" id="offerTitle" placeholder="اسم الحساب أو تفاصيله باختصار" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white">
                     <input type="text" id="offerPrice" placeholder="السعر المطلوب" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white">
                     <input type="text" id="offerPhone" placeholder="رقم هاتفك أو وسيلة التواصل" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white">
                     <textarea id="offerDesc" placeholder="تفاصيل ومميزات الحساب..." required rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white"></textarea>
                     <div class="space-y-1">
-                        <label class="text-xs text-slate-400">اختر صور الحساب (حتى 4 صور وفيديوهات):</label>
+                        <label class="text-xs text-slate-400">اختر صور وفيديوهات الحساب (متعدد):</label>
                         <input type="file" id="offerFiles" accept="image/*,video/*" multiple required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-300 file:bg-blue-600 file:text-white file:border-none file:rounded-lg file:px-2 file:py-1 file:cursor-pointer">
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl text-white font-bold transition shadow-md">إرسال الحساب للأدمن</button>
+                    <button type="submit" id="submitOfferBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl text-white font-bold transition shadow-md">إرسال الحساب للأدمن</button>
                 </form>
             </div>
         </section>
 
-        <!-- 2. صفحة الأدمن (خدمة العملاء وتأكيد الدفع) -->
-        <section id="supportTab" class="hidden max-w-xl mx-auto space-y-4">
+        <!-- 2. صفحة الأدمن (خدمة العملاء ومحادثات العملاء الخاصة) -->
+        <section id="supportTab" class="hidden max-w-4xl mx-auto space-y-4">
             <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold text-lg mb-2 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> التواصل مع الأدمن وتأكيد الدفع</h3>
-                <p class="text-xs text-slate-400 mb-4">أرسل رسالتك أو سكرين شوت تأكيد الدفع (الرسائل لا تظهر إلا للأدمن وصاحبها فقط).</p>
+                <p class="text-xs text-slate-400 mb-4">محادثة خاصة ومنظمة بينك وبين الأدمن فقط لإرسال سكرين شوت ومتابعة الطلبات.</p>
+                
+                <!-- قائمة المحادثات للأدمن فقط -->
+                <div id="adminChatUsersList" class="hidden mb-4 p-3 bg-slate-900 rounded-xl border border-slate-800 max-h-40 overflow-y-auto space-y-2">
+                    <h4 class="text-xs font-bold text-amber-400">اختر محادثة العميل:</h4>
+                    <div id="usersChatListContainer" class="flex flex-wrap gap-2"></div>
+                </div>
+
                 <div id="chatMessages" class="bg-slate-950 p-4 rounded-xl h-72 overflow-y-auto space-y-3 mb-4 text-sm border border-slate-800 flex flex-col"></div>
                 <form id="chatForm" onsubmit="sendMessage(event)" class="space-y-2">
                     <input type="text" id="chatInput" placeholder="اكتب رسالتك أو تفاصيل الطلب..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
@@ -176,7 +168,7 @@
             </div>
         </section>
 
-        <!-- صفحة عروض العملاء للأدمن -->
+        <!-- صفحة عروض العملاء للأدمن (مع إمكانية التعديل قبل النشر) -->
         <section id="adminOffersTab" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-indigo-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-indigo-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> عروض الحسابات المقدمة من العملاء</h3>
@@ -187,24 +179,28 @@
         <!-- 3. لوحة تحكم الأدمن -->
         <section id="adminTab" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
-                <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (AM Store)</h3>
+                <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (A&M Store)</h3>
                 <div class="space-y-5">
-                    <!-- إضافة رابط جروب الواتساب -->
-                    <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-green-400"></i> ضبط رابط جروب الواتساب للعملاء</h4>
+                    <!-- إعدادات رابط الواتساب ورابط الضمان فيسبوك -->
+                    <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800 space-y-3">
+                        <h4 class="font-bold text-sm text-slate-200 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-green-400"></i> ضبط روابط التواصل والضمان</h4>
                         <div class="flex gap-2 items-center">
-                            <input type="url" id="adminWhatsappInput" placeholder="ضع رابط جروب الواتساب هنا..." class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <button onclick="saveWhatsappGroup()" class="bg-green-600 hover:bg-green-500 px-5 py-2.5 rounded-lg text-white text-sm font-bold transition">حفظ الرابط</button>
+                            <input type="url" id="adminWhatsappInput" placeholder="رابط جروب الواتساب..." class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <button onclick="saveWhatsappGroup()" class="bg-green-600 hover:bg-green-500 px-4 py-2.5 rounded-lg text-white text-sm font-bold transition">حفظ الواتساب</button>
+                        </div>
+                        <div class="flex gap-2 items-center pt-2">
+                            <input type="url" id="adminWarrantyInput" placeholder="رابط ضمان فيسبوك..." class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <button onclick="saveWarrantyLink()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-lg text-white text-sm font-bold transition">حفظ الضمان</button>
                         </div>
                     </div>
 
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (حتى 4 صور وفيديوهات متعددة)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <input type="text" id="accTitle" placeholder="اسم الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <input type="text" id="accPrice" placeholder="السعر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <div class="sm:col-span-2 space-y-1">
-                                <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (حتى 4 صور وفيديوهات):</label>
+                                <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (متعدد):</label>
                                 <input type="file" id="accFile" accept="image/*,video/*" multiple required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             </div>
                             <input type="text" id="accPhone" placeholder="رقم الدفع" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
@@ -214,7 +210,7 @@
                     </div>
 
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (صورة أو فيديو تظهر لكل المستخدمين والزوار)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (تظهر لكل المستخدمين والزوار)</h4>
                         <div class="flex gap-2 items-center">
                             <input type="file" id="bgFile" accept="image/*,video/*" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-blue-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             <button onclick="updateBackgroundFromFile()" class="bg-amber-600 hover:bg-amber-500 px-5 py-2.5 rounded-lg text-white text-sm font-bold transition">تحديث الخلفية</button>
@@ -288,6 +284,7 @@
         const itemsPerPage = 6;
         let storeAccountsData = [];
         let accountSliderIndexes = {};
+        let selectedChatUserUid = null; // للأدمن لتحديد محادثة العميل
 
         const translations = {
             ar: { store: "المتجر", support: "الأدمن", admin: "لوحة الأدمن", login: "دخول بقوقل" },
@@ -322,7 +319,7 @@
             const userName = document.getElementById('userName');
             const adminTabBtn = document.getElementById('adminTabBtn');
             const adminOffersTabBtn = document.getElementById('adminOffersTabBtn');
-            const warrantyAdminEditContainer = document.getElementById('warrantyAdminEditContainer');
+            const adminChatUsersList = document.getElementById('adminChatUsersList');
 
             if (user) {
                 loginBtn.classList.add('hidden');
@@ -332,31 +329,33 @@
                 if (user.email === ADMIN_EMAIL) {
                     adminTabBtn.classList.remove('hidden');
                     adminOffersTabBtn.classList.remove('hidden');
-                    warrantyAdminEditContainer.classList.remove('hidden');
+                    adminChatUsersList.classList.remove('hidden');
+                    loadAdminChatUsers();
                 } else {
                     adminTabBtn.classList.add('hidden');
                     adminOffersTabBtn.classList.add('hidden');
-                    warrantyAdminEditContainer.classList.add('hidden');
+                    adminChatUsersList.classList.add('hidden');
                 }
             } else {
                 loginBtn.classList.remove('hidden');
                 userInfo.classList.add('hidden');
                 adminTabBtn.classList.add('hidden');
                 adminOffersTabBtn.classList.add('hidden');
-                warrantyAdminEditContainer.classList.add('hidden');
+                adminChatUsersList.classList.add('hidden');
             }
             loadSupportMessages();
         });
 
         function switchTab(tabName) {
-            ['storeTab', 'warrantyTab', 'submitOfferTab', 'supportTab', 'adminOffersTab', 'adminTab'].forEach(t => {
+            ['storeTab', 'submitOfferTab', 'supportTab', 'adminOffersTab', 'adminTab'].forEach(t => {
                 document.getElementById(t).classList.add('hidden');
             });
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            if(tabName === 'support') loadSupportMessages();
         }
 
         function readFileAsDataURL(fileInput) {
-            return Promise.all(Array.from(fileInput.files).slice(0, 4).map(file => {
+            return Promise.all(Array.from(fileInput.files).map(file => {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = (e) => resolve({ data: e.target.result, type: file.type });
@@ -370,6 +369,7 @@
         async function addAdminAccount(e) {
             e.preventDefault();
             const publishBtn = document.getElementById('publishBtn');
+            if(publishBtn.disabled) return;
             publishBtn.disabled = true;
             publishBtn.textContent = 'جاري النشر...';
 
@@ -398,7 +398,7 @@
             }
         }
 
-        // إرسال عرض حساب من المستخدم للأدمن
+        // إرسال عرض حساب من المستخدم للأدمن (مع منع التكرار)
         async function submitUserOffer(e) {
             e.preventDefault();
             if(!currentUser) {
@@ -406,7 +406,11 @@
                 return;
             }
 
-            const title = document.getElementById('offerTitle').value;
+            const submitBtn = document.getElementById('submitOfferBtn');
+            if(submitBtn.disabled) return;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الإرسال...';
+
             const price = document.getElementById('offerPrice').value;
             const phone = document.getElementById('offerPhone').value;
             const desc = document.getElementById('offerDesc').value;
@@ -416,7 +420,8 @@
                 const filesData = await readFileAsDataURL(fileInput);
 
                 db.ref('userOffers').push({
-                    title, price, phone, desc, mediaFiles: filesData,
+                    title: 'حساب معروض من العميل',
+                    price, phone, desc, mediaFiles: filesData,
                     senderName: currentUser.displayName,
                     senderEmail: currentUser.email,
                     senderUid: currentUser.uid,
@@ -424,14 +429,18 @@
                 }).then(() => {
                     alert('تم إرسال حسابك للأدمن بنجاح! سيتم مراجعته وعرضه في المتجر.');
                     document.getElementById('submitOfferForm').reset();
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'إرسال الحساب للأدمن';
                     switchTab('store');
                 });
             } catch (err) {
                 alert('خطأ في رفع الملفات: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'إرسال الحساب للأدمن';
             }
         }
 
-        // جلب واستعراض عروض العملاء للأدمن
+        // جلب واستعراض عروض العملاء للأدمن (مع إمكانية التعديل قبل النشر)
         function loadUserOffers() {
             db.ref('userOffers').on('value', (snapshot) => {
                 const grid = document.getElementById('adminOffersGrid');
@@ -455,16 +464,21 @@
                         }
 
                         grid.innerHTML += `
-                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
                                 ${mediaPreview}
-                                <div>
-                                    <h4 class="font-bold text-white">${offer.title}</h4>
-                                    <p class="text-xs text-slate-400">المرسل: ${offer.senderName} (${offer.senderEmail})</p>
-                                    <p class="text-xs text-slate-300 mt-1">${offer.desc}</p>
-                                    <p class="text-xs text-emerald-400 mt-1">السعر: ${offer.price} | للتواصل: ${offer.phone}</p>
+                                <div class="space-y-1">
+                                    <label class="text-xs text-slate-400">اسم/عنوان الحساب:</label>
+                                    <input type="text" id="pubTitle_${key}" value="${offer.title}" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                    <label class="text-xs text-slate-400">السعر:</label>
+                                    <input type="text" id="pubPrice_${key}" value="${offer.price}" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                    <label class="text-xs text-slate-400">رقم الدفع/التواصل:</label>
+                                    <input type="text" id="pubPhone_${key}" value="${offer.phone}" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                    <label class="text-xs text-slate-400">التفاصيل:</label>
+                                    <textarea id="pubDesc_${key}" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">${offer.desc}</textarea>
+                                    <p class="text-xs text-slate-400 pt-1">المرسل: ${offer.senderName} (${offer.senderEmail})</p>
                                 </div>
                                 <div class="flex gap-2 pt-2">
-                                    <button onclick='publishUserOfferToStore(${JSON.stringify(offer)})' class="flex-grow bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg text-xs font-bold text-white">نشر للمتجر</button>
+                                    <button onclick="publishEditedUserOffer('${key}', ${JSON.stringify(offer.mediaFiles).replace(/"/g, '&quot;')})" class="flex-grow bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg text-xs font-bold text-white">تعديل ونشر للمتجر</button>
                                     <button onclick="deleteUserOffer('${key}')" class="bg-red-600 hover:bg-red-500 px-3 py-2 rounded-lg text-xs text-white">حذف</button>
                                 </div>
                             </div>
@@ -477,20 +491,19 @@
             });
         }
 
-        function publishUserOfferToStore(offer) {
+        function publishEditedUserOffer(key, mediaFiles) {
+            const title = document.getElementById(`pubTitle_${key}`).value;
+            const price = document.getElementById(`pubPrice_${key}`).value;
+            const phone = document.getElementById(`pubPhone_${key}`).value;
+            const desc = document.getElementById(`pubDesc_${key}`).value;
+
             db.ref('adminAccounts').push({
-                title: offer.title,
-                price: offer.price,
-                phone: offer.phone,
-                desc: offer.desc,
-                mediaFiles: offer.mediaFiles,
+                title, price, phone, desc, mediaFiles,
                 status: 'متاح',
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم نشر الحساب في المتجر بنجاح!');
-                db.ref(`userOffers`).orderByChild('title').equalTo(offer.title).once('value', snapshot => {
-                    snapshot.forEach(child => child.ref.remove());
-                });
+                alert('تم تعديل ونشر الحساب في المتجر بنجاح!');
+                db.ref(`userOffers/${key}`).remove();
             });
         }
 
@@ -500,20 +513,30 @@
             }
         }
 
-        // حفظ وتحديث صفحة الضمان
-        function saveWarrantyContent() {
-            const text = document.getElementById('warrantyEditText').value;
-            db.ref('settings/warrantyText').set(text).then(() => {
-                alert('تم حفظ محتوى الضمان بنجاح!');
+        // حفظ رابط الضمان (فيسبوك)
+        function saveWarrantyLink() {
+            const url = document.getElementById('adminWarrantyInput').value;
+            if(!url) {
+                alert('الرجاء إدخال رابط صحيح.');
+                return;
+            }
+            db.ref('settings/warrantyLink').set(url).then(() => {
+                alert('تم حفظ رابط الضمان بنجاح!');
             });
         }
 
-        function loadWarrantyContent() {
-            db.ref('settings/warrantyText').on('value', (snapshot) => {
-                const text = snapshot.val() || 'نحن في AM Store نضمن لك كامل حقوقك المالية وحساباتنا مضمونة 100% وخالية من أي مشاكل. يتم تسليم الحساب فور تأكيد الدفع وإرسال الاسكرين شوت للأدمن.';
-                document.getElementById('warrantyContent').textContent = text;
-                const editInput = document.getElementById('warrantyEditText');
-                if(editInput) editInput.value = text;
+        function loadWarrantyLink() {
+            db.ref('settings/warrantyLink').on('value', (snapshot) => {
+                const url = snapshot.val();
+                const btn = document.getElementById('warrantyBtn');
+                const input = document.getElementById('adminWarrantyInput');
+                if (url) {
+                    btn.href = url;
+                    btn.classList.remove('hidden');
+                    if (input) input.value = url;
+                } else {
+                    btn.classList.add('hidden');
+                }
             });
         }
 
@@ -578,6 +601,121 @@
                     if (input) input.value = url;
                 } else {
                     btn.classList.add('hidden');
+                }
+            });
+        }
+
+        // نظام المحادثات الخاصة المنظمة
+        function loadAdminChatUsers() {
+            db.ref('supportMessages').on('value', (snapshot) => {
+                const container = document.getElementById('usersChatListContainer');
+                container.innerHTML = '';
+                const data = snapshot.val();
+                if(!data) return;
+
+                const usersMap = {};
+                Object.keys(data).forEach(key => {
+                    const msg = data[key];
+                    if(msg.senderUid && msg.senderEmail !== ADMIN_EMAIL) {
+                        usersMap[msg.senderUid] = msg.senderName;
+                    }
+                });
+
+                Object.keys(usersMap).forEach(uid => {
+                    const name = usersMap[uid];
+                    container.innerHTML += `
+                        <button onclick="selectChatUser('${uid}')" class="px-3 py-1.5 rounded-lg text-xs font-bold ${selectedChatUserUid === uid ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">${name}</button>
+                    `;
+                });
+            });
+        }
+
+        function selectChatUser(uid) {
+            selectedChatUserUid = uid;
+            loadAdminChatUsers();
+            loadSupportMessages();
+        }
+
+        async function sendMessage(e) {
+            e.preventDefault();
+            if(!currentUser) {
+                alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال سكرين شوت الدفع.');
+                return;
+            }
+            const text = document.getElementById('chatInput').value;
+            const isAdmin = currentUser.email === ADMIN_EMAIL;
+            const targetUid = isAdmin ? selectedChatUserUid : currentUser.uid;
+
+            if(isAdmin && !targetUid) {
+                alert('الرجاء اختيار العميل من القائمة بالأعلى أولاً لعرض والرد على محادثته.');
+                return;
+            }
+
+            try {
+                const fileInput = document.getElementById('chatFile');
+                const mediaData = await readFileAsDataURL(fileInput);
+
+                db.ref('supportMessages').push({
+                    senderName: currentUser.displayName,
+                    senderUid: currentUser.uid,
+                    senderEmail: currentUser.email,
+                    targetUid: targetUid,
+                    text: text || '(إرسال سكرين شوت تأكيد الدفع)',
+                    mediaUrl: mediaData.length > 0 ? mediaData[0].data : '',
+                    mediaType: mediaData.length > 0 ? mediaData[0].type : '',
+                    timestamp: Date.now()
+                }).then(() => {
+                    document.getElementById('chatInput').value = '';
+                    document.getElementById('chatFile').value = '';
+                });
+            } catch (err) {
+                alert('خطأ في إرسال الرسالة: ' + err.message);
+            }
+        }
+
+        function loadSupportMessages() {
+            db.ref('supportMessages').on('value', (snapshot) => {
+                const chatBox = document.getElementById('chatMessages');
+                chatBox.innerHTML = '';
+                const data = snapshot.val();
+                const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+
+                if (data) {
+                    let hasMessages = false;
+                    Object.keys(data).forEach(key => {
+                        const msg = data[key];
+                        const belongsToChat = isAdmin ? (msg.targetUid === selectedChatUserUid || msg.senderUid === selectedChatUserUid) : (msg.senderUid === currentUser?.uid || msg.targetUid === currentUser?.uid);
+
+                        if(belongsToChat) {
+                            hasMessages = true;
+                            const isVideo = msg.mediaType && msg.mediaType.includes('video');
+                            let mediaHtml = '';
+                            if (msg.mediaUrl) {
+                                if (isVideo) {
+                                    mediaHtml = `<video src="${msg.mediaUrl}" controls class="max-h-40 rounded-lg mt-2 cursor-pointer" onclick="openMediaModal('${msg.mediaUrl}', '${msg.mediaType}')"></video>`;
+                                } else {
+                                    mediaHtml = `<img src="${msg.mediaUrl}" class="max-h-40 rounded-lg mt-2 cursor-pointer" onclick="openMediaModal('${msg.mediaUrl}', '${msg.mediaType}')">`;
+                                }
+                            }
+
+                            chatBox.innerHTML += `
+                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-bold text-emerald-400">${msg.senderName}</span>
+                                        <span class="text-slate-500">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>
+                                    </div>
+                                    <div class="text-slate-200 text-sm">${msg.text}</div>
+                                    ${mediaHtml}
+                                </div>
+                            `;
+                        }
+                    });
+                    if(!hasMessages) {
+                        chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل في هذه المحادثة حالياً.</div>';
+                    }
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } else {
+                    chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل حالياً.</div>';
                 }
             });
         }
@@ -778,85 +916,11 @@
             }
         }
 
-        async function sendMessage(e) {
-            e.preventDefault();
-            if(!currentUser) {
-                alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال سكرين شوت الدفع.');
-                return;
-            }
-            const text = document.getElementById('chatInput').value;
-
-            try {
-                const fileInput = document.getElementById('chatFile');
-                const mediaData = await readFileAsDataURL(fileInput);
-
-                db.ref('supportMessages').push({
-                    senderName: currentUser.displayName,
-                    senderUid: currentUser.uid,
-                    senderEmail: currentUser.email,
-                    text: text || '(إرسال سكرين شوت تأكيد الدفع)',
-                    mediaUrl: mediaData.length > 0 ? mediaData[0].data : '',
-                    mediaType: mediaData.length > 0 ? mediaData[0].type : '',
-                    timestamp: Date.now()
-                }).then(() => {
-                    document.getElementById('chatInput').value = '';
-                    document.getElementById('chatFile').value = '';
-                });
-            } catch (err) {
-                alert('خطأ في إرسال الرسالة: ' + err.message);
-            }
-        }
-
-        function loadSupportMessages() {
-            db.ref('supportMessages').on('value', (snapshot) => {
-                const chatBox = document.getElementById('chatMessages');
-                chatBox.innerHTML = '';
-                const data = snapshot.val();
-                const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
-
-                if (data) {
-                    let hasMessages = false;
-                    Object.keys(data).forEach(key => {
-                        const msg = data[key];
-                        if(isAdmin || (currentUser && msg.senderUid === currentUser.uid)) {
-                            hasMessages = true;
-                            const isVideo = msg.mediaType && msg.mediaType.includes('video');
-                            let mediaHtml = '';
-                            if (msg.mediaUrl) {
-                                if (isVideo) {
-                                    mediaHtml = `<video src="${msg.mediaUrl}" controls class="max-h-40 rounded-lg mt-2 cursor-pointer" onclick="openMediaModal('${msg.mediaUrl}', '${msg.mediaType}')"></video>`;
-                                } else {
-                                    mediaHtml = `<img src="${msg.mediaUrl}" class="max-h-40 rounded-lg mt-2 cursor-pointer" onclick="openMediaModal('${msg.mediaUrl}', '${msg.mediaType}')">`;
-                                }
-                            }
-
-                            chatBox.innerHTML += `
-                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
-                                    <div class="flex justify-between items-center text-xs">
-                                        <span class="font-bold text-emerald-400">${msg.senderName}</span>
-                                        <span class="text-slate-500">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>
-                                    </div>
-                                    <div class="text-slate-200 text-sm">${msg.text}</div>
-                                    ${mediaHtml}
-                                </div>
-                            `;
-                        }
-                    });
-                    if(!hasMessages) {
-                        chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل سابقة.</div>';
-                    }
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                } else {
-                    chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل حالياً.</div>';
-                }
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedBackground();
             loadStoreAccounts();
             loadWhatsappGroup();
-            loadWarrantyContent();
+            loadWarrantyLink();
             loadUserOffers();
         });
     </script>
