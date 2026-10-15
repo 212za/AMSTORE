@@ -75,6 +75,10 @@
                 <button onclick="switchTab('support')" id="btnSupport" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-headset"></i> <span data-translate="support">الأدمن</span>
                 </button>
+                <!-- زر جروب الواتساب يظهر للجميع -->
+                <a id="whatsappGroupBtn" href="#" target="_blank" class="hidden px-3.5 py-2 rounded-xl bg-green-600 hover:bg-green-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> <span>جروب الواتساب</span>
+                </a>
                 <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-lock"></i> <span data-translate="admin">لوحة الأدمن</span>
                 </button>
@@ -105,7 +109,7 @@
         <section id="storeTab" class="space-y-6">
             <div class="text-center space-y-2">
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white"><span class="text-accentGreen">أقوى حسابات</span> eFootball Mobile</h1>
-                <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها عبر المحفظة أو تواصل مع الأدمن مباشرة.</p>
+                <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها وتأكيد الدفع عبر إرسال سكرين شوت للأدمن.</p>
             </div>
             <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             <div id="paginationControls" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
@@ -115,7 +119,7 @@
         <section id="supportTab" class="hidden max-w-xl mx-auto space-y-4">
             <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold text-lg mb-2 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> التواصل مع الأدمن وتأكيد الدفع</h3>
-                <p class="text-xs text-slate-400 mb-4">أرسل رسالتك أو سكرين شوت الدفع بالمحفظة (الرسائل لا تظهر إلا للأدمن وصاحبها فقط).</p>
+                <p class="text-xs text-slate-400 mb-4">أرسل رسالتك أو سكرين شوت تأكيد الدفع (الرسائل لا تظهر إلا للأدمن وصاحبها فقط).</p>
                 <div id="chatMessages" class="bg-slate-950 p-4 rounded-xl h-72 overflow-y-auto space-y-3 mb-4 text-sm border border-slate-800 flex flex-col"></div>
                 <form id="chatForm" onsubmit="sendMessage(event)" class="space-y-2">
                     <input type="text" id="chatInput" placeholder="اكتب رسالتك أو تفاصيل الطلب..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
@@ -132,6 +136,15 @@
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (AM Store)</h3>
                 <div class="space-y-5">
+                    <!-- إضافة رابط جروب الواتساب -->
+                    <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-green-400"></i> ضبط رابط جروب الواتساب للعملاء</h4>
+                        <div class="flex gap-2 items-center">
+                            <input type="url" id="adminWhatsappInput" placeholder="ضع رابط جروب الواتساب هنا..." class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <button onclick="saveWhatsappGroup()" class="bg-green-600 hover:bg-green-500 px-5 py-2.5 rounded-lg text-white text-sm font-bold transition">حفظ الرابط</button>
+                        </div>
+                    </div>
+
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (اختر عدة صور أو فيديوهات)</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -141,13 +154,12 @@
                                 <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (متعدد):</label>
                                 <input type="file" id="accFile" accept="image/*,video/*" multiple required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             </div>
-                            <!-- تم تغيير الحقل هنا -->
                             <input type="text" id="accPhone" placeholder="رقم الدفع" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
                             <textarea id="accDesc" placeholder="تفاصيل ومميزات الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
                             <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
                         </form>
                     </div>
-                    <!-- تغيير الخلفية وموديل التعديل -->
+
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (اختر صورة أو فيديو من جهازك)</h4>
                         <div class="flex gap-2 items-center">
@@ -308,6 +320,34 @@
             }
         }
 
+        // حفظ رابط الواتساب من لوحة الأدمن
+        function saveWhatsappGroup() {
+            const url = document.getElementById('adminWhatsappInput').value;
+            if(!url) {
+                alert('الرجاء إدخال رابط صحيح.');
+                return;
+            }
+            db.ref('settings/whatsappGroup').set(url).then(() => {
+                alert('تم حفظ رابط جروب الواتساب بنجاح!');
+            });
+        }
+
+        // جلب واستعراض رابط الواتساب للعملاء والأدمن
+        function loadWhatsappGroup() {
+            db.ref('settings/whatsappGroup').on('value', (snapshot) => {
+                const url = snapshot.val();
+                const btn = document.getElementById('whatsappGroupBtn');
+                const input = document.getElementById('adminWhatsappInput');
+                if (url) {
+                    btn.href = url;
+                    btn.classList.remove('hidden');
+                    if (input) input.value = url;
+                } else {
+                    btn.classList.add('hidden');
+                }
+            });
+        }
+
         function nextImage(accountId, direction) {
             if (!storeAccountsData) return;
             const account = storeAccountsData.find(acc => acc.id === accountId);
@@ -408,8 +448,9 @@
                             <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
                         </div>
                         <div class="p-4 pt-0 flex flex-wrap gap-2">
-                            <button onclick="payWithWallet('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-wallet"></i> دفع بالمحفظة
+                            <!-- زر التأكيد بالاسكرين شوت وتحويله للأدمن -->
+                            <button onclick="confirmScreenshot('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-camera"></i> تأكيد بالاسكرين شوت
                             </button>
                             ${isAdmin ? `
                                 <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
@@ -443,8 +484,8 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function payWithWallet(title, price) {
-            alert(`تم طلب شراء حساب (${title}) بسعر (${price}). سيتم تحويلك لصفحة الأدمن لإرسال سكرين شوت الدفع.`);
+        function confirmScreenshot(title, price) {
+            alert(`تم تحويلك للأدمن. قم بإرسال سكرين شوت تأكيد الدفع لحساب (${title}) بسعر (${price}) هناك.`);
             switchTab('support');
         }
 
@@ -529,7 +570,7 @@
         async function sendMessage(e) {
             e.preventDefault();
             if(!currentUser) {
-                alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال رسالة أو سكرين شوت الدفع.');
+                alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال سكرين شوت الدفع.');
                 return;
             }
             const text = document.getElementById('chatInput').value;
@@ -542,7 +583,7 @@
                     senderName: currentUser.displayName,
                     senderUid: currentUser.uid,
                     senderEmail: currentUser.email,
-                    text: text || '(إرسال سكرين شوت الدفع)',
+                    text: text || '(إرسال سكرين شوت تأكيد الدفع)',
                     mediaUrl: mediaData.length > 0 ? mediaData[0].data : '',
                     mediaType: mediaData.length > 0 ? mediaData[0].type : '',
                     timestamp: Date.now()
@@ -603,6 +644,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedBackground();
             loadStoreAccounts();
+            loadWhatsappGroup();
         });
     </script>
 </body>
