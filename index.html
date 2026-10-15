@@ -105,27 +105,20 @@
         <section id="storeTab" class="space-y-6">
             <div class="text-center space-y-2">
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white"><span class="text-accentGreen">أقوى حسابات</span> eFootball Mobile</h1>
-                <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها وتأكيد الدفع عبر إرسال سكرين شوت للأدمن.</p>
+                <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها عبر المحفظة أو تواصل مع الأدمن مباشرة.</p>
             </div>
-            
-            <!-- لوحة تحكم الأدمن لتبديل وتصفح شاتات المستخدمين -->
-            <div id="adminChatSelectorContainer" class="hidden max-w-4xl mx-auto bg-cardBg/90 backdrop-blur p-4 rounded-2xl border border-amber-500/30 mb-6">
-                <h4 class="text-amber-400 font-bold text-sm mb-2"><i class="fa-solid fa-users-rectangle"></i> لوحة إدارة محادثات العملاء (خاص بالأدمن):</h4>
-                <div id="usersChatList" class="flex gap-2 overflow-x-auto pb-2"></div>
-            </div>
-
             <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             <div id="paginationControls" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
         </section>
 
-        <!-- 2. صفحة التواصل مع الأدمن وتأكيد الدفع -->
+        <!-- 2. صفحة الأدمن (خدمة العملاء وتأكيد الدفع) -->
         <section id="supportTab" class="hidden max-w-xl mx-auto space-y-4">
             <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold text-lg mb-2 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> التواصل مع الأدمن وتأكيد الدفع</h3>
-                <p class="text-xs text-slate-400 mb-4" id="chatSubTitle">أرسل رسالتك أو سكرين شوت تأكيد الدفع (الرسائل لا تظهر إلا للأدمن وصاحبها فقط).</p>
+                <p class="text-xs text-slate-400 mb-4">أرسل رسالتك أو سكرين شوت الدفع بالمحفظة (الرسائل لا تظهر إلا للأدمن وصاحبها فقط).</p>
                 <div id="chatMessages" class="bg-slate-950 p-4 rounded-xl h-72 overflow-y-auto space-y-3 mb-4 text-sm border border-slate-800 flex flex-col"></div>
                 <form id="chatForm" onsubmit="sendMessage(event)" class="space-y-2">
-                    <input type="text" id="chatInput" placeholder="اكتب تفاصيل الطلب أو رقم الدفع..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="chatInput" placeholder="اكتب رسالتك أو تفاصيل الطلب..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <div class="flex gap-2 items-center">
                         <input type="file" id="chatFile" accept="image/*,video/*" class="flex-grow bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-300 file:bg-emerald-600 file:text-white file:border-none file:rounded-lg file:px-2 file:py-1 file:cursor-pointer">
                         <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-white font-bold transition shadow-md"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
@@ -134,27 +127,29 @@
             </div>
         </section>
 
-        <!-- 3. لوحة تحكم الأدمن الرئيسية -->
+        <!-- 3. لوحة تحكم الأدمن -->
         <section id="adminTab" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (AM Store)</h3>
                 <div class="space-y-5">
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (صور أو فيديوهات متعددة)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (اختر عدة صور أو فيديوهات)</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <input type="text" id="accTitle" placeholder="اسم الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <input type="text" id="accPrice" placeholder="السعر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <div class="sm:col-span-2 space-y-1">
-                                <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك:</label>
+                                <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (متعدد):</label>
                                 <input type="file" id="accFile" accept="image/*,video/*" multiple required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             </div>
-                            <input type="text" id="accPhone" placeholder="رقم الدفع بالمحفظة" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
+                            <!-- تم تغيير الحقل هنا -->
+                            <input type="text" id="accPhone" placeholder="رقم الدفع" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
                             <textarea id="accDesc" placeholder="تفاصيل ومميزات الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
                             <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
                         </form>
                     </div>
+                    <!-- تغيير الخلفية وموديل التعديل -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (صورة أو فيديو من جهازك)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (اختر صورة أو فيديو من جهازك)</h4>
                         <div class="flex gap-2 items-center">
                             <input type="file" id="bgFile" accept="image/*,video/*" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-blue-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             <button onclick="updateBackgroundFromFile()" class="bg-amber-600 hover:bg-amber-500 px-5 py-2.5 rounded-lg text-white text-sm font-bold transition">تحديث الخلفية</button>
@@ -179,7 +174,7 @@
                         <input type="text" id="editPrice" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-sm text-slate-400 mb-1">رقم الدفع بالمحفظة</label>
+                        <label class="block text-sm text-slate-400 mb-1">رقم الدفع</label>
                         <input type="text" id="editPhone" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
@@ -196,11 +191,7 @@
 
     </main>
 
-    <footer class="bg-cardBg/90 border-t border-slate-800 py-4 text-center text-xs text-slate-400">
-        جميع الحقوق محفوظة &copy; 2026 - AM Store لبيع حسابات بيس موبايل
-    </footer>
-
-    <!-- سكربت التشغيل والتخزين الدائم -->
+    <!-- سكربت التشغيل -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBMpZ7CXOJbgKpMqOjzsbbCcpHBlslU3mw",
@@ -224,7 +215,6 @@
         const itemsPerPage = 6;
         let storeAccountsData = [];
         let accountSliderIndexes = {};
-        let selectedChatUid = null; // للأدمن للتنقل بين محادثات العملاء
 
         const translations = {
             ar: { store: "المتجر", support: "الأدمن", admin: "لوحة الأدمن", login: "دخول بقوقل" },
@@ -258,7 +248,6 @@
             const userInfo = document.getElementById('userInfo');
             const userName = document.getElementById('userName');
             const adminTabBtn = document.getElementById('adminTabBtn');
-            const adminChatContainer = document.getElementById('adminChatSelectorContainer');
 
             if (user) {
                 loginBtn.classList.add('hidden');
@@ -267,16 +256,13 @@
 
                 if (user.email === ADMIN_EMAIL) {
                     adminTabBtn.classList.remove('hidden');
-                    adminChatContainer.classList.remove('hidden');
                 } else {
                     adminTabBtn.classList.add('hidden');
-                    adminChatContainer.classList.add('hidden');
                 }
             } else {
                 loginBtn.classList.remove('hidden');
                 userInfo.classList.add('hidden');
                 adminTabBtn.classList.add('hidden');
-                adminChatContainer.classList.add('hidden');
             }
             loadSupportMessages();
         });
@@ -418,15 +404,15 @@
                         <div class="p-4 space-y-2 flex-grow">
                             <h4 class="font-bold text-white text-base">${acc.title}</h4>
                             <p class="text-xs text-slate-300 line-clamp-2">${acc.desc}</p>
-                            <div class="text-xs text-slate-400"><i class="fa-solid fa-wallet text-emerald-400"></i> رقم الدفع بالمحفظة: <span class="text-white font-bold">${acc.phone}</span></div>
+                            <div class="text-xs text-slate-400"><i class="fa-solid fa-phone text-emerald-400"></i> رقم الدفع: ${acc.phone}</div>
                             <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
                         </div>
                         <div class="p-4 pt-0 flex flex-wrap gap-2">
-                            <button onclick="confirmPayment('${acc.title}', '${acc.price}', '${acc.phone}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-file-arrow-up"></i> تأكيد بالاسكرين شوت
+                            <button onclick="payWithWallet('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-wallet"></i> دفع بالمحفظة
                             </button>
                             ${isAdmin ? `
-                                <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
                                 <button onclick="toggleSoldStatus('${acc.id}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
                                 <button onclick="deleteAdminAccount('${acc.id}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
                             ` : ''}
@@ -457,11 +443,12 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function confirmPayment(title, price, phone) {
-            alert(`تم تحويلك للأدمن. أرسل الآن سكرين شوت تأكيد الدفع على رقم المحفظة (${phone}) لحساب (${title}) بسعر (${price}).`);
+        function payWithWallet(title, price) {
+            alert(`تم طلب شراء حساب (${title}) بسعر (${price}). سيتم تحويلك لصفحة الأدمن لإرسال سكرين شوت الدفع.`);
             switchTab('support');
         }
 
+        // خصائص التعديل
         function openEditModal(id, title, price, phone, desc) {
             document.getElementById('editAccId').value = id;
             document.getElementById('editTitle').value = title;
@@ -539,11 +526,10 @@
             }
         }
 
-        // إرسال الرسائل والاسكرين شوت
         async function sendMessage(e) {
             e.preventDefault();
             if(!currentUser) {
-                alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال رسالة أو سكرين شوت تأكيد الدفع.');
+                alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال رسالة أو سكرين شوت الدفع.');
                 return;
             }
             const text = document.getElementById('chatInput').value;
@@ -552,20 +538,17 @@
                 const fileInput = document.getElementById('chatFile');
                 const mediaData = await readFileAsDataURL(fileInput);
 
-                // إذا كان الأدمن يكتب رسالة وهو متصل بمحادثة عميل معين، تُرسل باسم العميل أو كأدمن
-                const targetUid = (currentUser.email === ADMIN_EMAIL && selectedChatUid) ? selectedChatUid : currentUser.uid;
-
-                db.ref(`supportMessages/${targetUid}`).push({
+                db.ref('supportMessages').push({
                     senderName: currentUser.displayName,
                     senderUid: currentUser.uid,
                     senderEmail: currentUser.email,
-                    text: text || '(إرسال سكرين شوت تأكيد الدفع)',
+                    text: text || '(إرسال سكرين شوت الدفع)',
                     mediaUrl: mediaData.length > 0 ? mediaData[0].data : '',
                     mediaType: mediaData.length > 0 ? mediaData[0].type : '',
                     timestamp: Date.now()
                 }).then(() => {
                     document.getElementById('chatInput').value = '';
-                    document.getElementById('chatFile.value'] = '';
+                    document.getElementById('chatFile').value = '';
                 });
             } catch (err) {
                 alert('خطأ في إرسال الرسالة: ' + err.message);
@@ -575,91 +558,46 @@
         function loadSupportMessages() {
             db.ref('supportMessages').on('value', (snapshot) => {
                 const chatBox = document.getElementById('chatMessages');
-                const usersChatList = document.getElementById('usersChatList');
                 chatBox.innerHTML = '';
-                const allChats = snapshot.val();
+                const data = snapshot.val();
                 const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
 
-                if (allChats) {
-                    if (isAdmin) {
-                        // للأدمن: عرض قائمة العملاء الذين راسلوه للتنقل بين محادثاتهم
-                        usersChatList.innerHTML = '';
-                        let firstUid = null;
+                if (data) {
+                    let hasMessages = false;
+                    Object.keys(data).forEach(key => {
+                        const msg = data[key];
+                        if(isAdmin || (currentUser && msg.senderUid === currentUser.uid)) {
+                            hasMessages = true;
+                            const isVideo = msg.mediaType && msg.mediaType.includes('video');
+                            let mediaHtml = '';
+                            if (msg.mediaUrl) {
+                                if (isVideo) {
+                                    mediaHtml = `<video src="${msg.mediaUrl}" controls class="max-h-40 rounded-lg mt-2"></video>`;
+                                } else {
+                                    mediaHtml = `<img src="${msg.mediaUrl}" class="max-h-40 rounded-lg mt-2">`;
+                                }
+                            }
 
-                        Object.keys(allChats).forEach(uid => {
-                            if (!firstUid) firstUid = uid;
-                            const userMessages = allChats[uid];
-                            const lastMsgKey = Object.keys(userMessages).pop();
-                            const lastMsg = userMessages[lastMsgKey];
-
-                            const isSelected = selectedChatUid === uid || (!selectedChatUid && uid === firstUid);
-                            if (!selectedChatUid && uid === firstUid) selectedChatUid = firstUid;
-
-                            usersChatList.innerHTML += `
-                                <button onclick="selectUserChat('${uid}')" class="px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${isSelected ? 'bg-amber-600 text-white shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
-                                    <i class="fa-solid fa-user"></i> ${lastMsg.senderName || 'عميل'}
-                                </button>
+                            chatBox.innerHTML += `
+                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-bold text-emerald-400">${msg.senderName}</span>
+                                        <span class="text-slate-500">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>
+                                    </div>
+                                    <div class="text-slate-200 text-sm">${msg.text}</div>
+                                    ${mediaHtml}
+                                </div>
                             `;
-                        });
-
-                        // عرض رسائل العميل المحدد للأدمن
-                        if (selectedChatUid && allChats[selectedChatUid]) {
-                            document.getElementById('chatSubTitle').textContent = `عرض محادثة السكرين شوت للعميل الحالي.`;
-                            Object.keys(allChats[selectedChatUid]).forEach(msgKey => {
-                                const msg = allChats[selectedChatUid][msgKey];
-                                appendMessageToChatBox(chatBox, msg);
-                            });
-                        } else {
-                            chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">اختر عميلاً من القائمة بالأعلى لعرض سكرين شوت الدفع الخاص به.</div>';
                         }
-
-                    } else if (currentUser) {
-                        // للمستخدم العادي: عرض رسائله ومحادثته الخاصة مع الأدمن فقط
-                        const userChat = allChats[currentUser.uid];
-                        if (userChat) {
-                            Object.keys(userChat).forEach(msgKey => {
-                                const msg = userChat[msgKey];
-                                appendMessageToChatBox(chatBox, msg);
-                            });
-                        } else {
-                            chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل سابقة. أرسل سكرين شوت تأكيد الدفع هنا.</div>';
-                        }
-                    } else {
-                        chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">يرجى تسجيل الدخول بقوقل لمراسلة الأدمن وإرسال سكرين شوت الدفع.</div>';
+                    });
+                    if(!hasMessages) {
+                        chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل سابقة.</div>';
                     }
                     chatBox.scrollTop = chatBox.scrollHeight;
                 } else {
-                    chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل أو سكرين شوتات حالياً.</div>';
+                    chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل حالياً.</div>';
                 }
             });
-        }
-
-        function selectUserChat(uid) {
-            selectedChatUid = uid;
-            loadSupportMessages();
-        }
-
-        function appendMessageToChatBox(chatBox, msg) {
-            const isVideo = msg.mediaType && msg.mediaType.includes('video');
-            let mediaHtml = '';
-            if (msg.mediaUrl) {
-                if (isVideo) {
-                    mediaHtml = `<video src="${msg.mediaUrl}" controls class="max-h-40 rounded-lg mt-2"></video>`;
-                } else {
-                    mediaHtml = `<img src="${msg.mediaUrl}" class="max-h-40 rounded-lg mt-2">`;
-                }
-            }
-
-            chatBox.innerHTML += `
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold text-emerald-400">${msg.senderName}</span>
-                        <span class="text-slate-500">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>
-                    </div>
-                    <div class="text-slate-200 text-sm">${msg.text}</div>
-                    ${mediaHtml}
-                </div>
-            `;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
