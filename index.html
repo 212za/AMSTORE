@@ -90,6 +90,9 @@
                 <button id="adminOffersTabBtn" onclick="switchTab('adminOffers')" class="hidden px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-list-check"></i> <span data-translate="customerOffers">عروض العملاء</span> (<span id="offersCount">0</span>)
                 </button>
+                <button id="adminBlocksTabBtn" onclick="switchTab('adminBlocks')" class="hidden px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
+                    <i class="fa-solid fa-ban"></i> <span data-translate="blockedUsersTab">إدارة البلوكات</span> (<span id="blocksCount">0</span>)
+                </button>
             </nav>
 
             <div class="flex items-center gap-3">
@@ -143,8 +146,16 @@
 
         <!-- 2. صفحة الأدمن ومحادثات العملاء -->
         <section id="supportTab" class="hidden max-w-4xl mx-auto space-y-4">
+            <div id="blockedWarning" class="hidden bg-red-600/20 border border-red-500 text-red-300 p-4 rounded-xl text-center font-bold text-sm">
+                عذراً، لقد تم حظرك من قبل الأدمن ولا يمكنك إرسال رسائل جديدة حالياً.
+            </div>
             <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h3 class="font-bold text-lg mb-2 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> <span data-translate="supportTitle">التواصل مع الأدمن وتأكيد الدفع</span></h3>
+                <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
+                    <h3 class="font-bold text-lg text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> <span data-translate="supportTitle">التواصل مع الأدمن وتأكيد الدفع</span></h3>
+                    <div id="adminUserControlBtns" class="hidden flex gap-2">
+                        <button id="blockUserBtn" onclick="toggleBlockCurrentUser()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">حظر هذا المستخدم</button>
+                    </div>
+                </div>
                 <p class="text-xs text-slate-400 mb-4" data-translate="supportDesc">محادثة خاصة ومنظمة بينك وبين الأدمن فقط لإرسال سكرين شوت ومتابعة الطلبات.</p>
                 
                 <div id="adminChatUsersList" class="hidden mb-4 p-3 bg-slate-900 rounded-xl border border-slate-800 max-h-40 overflow-y-auto space-y-2">
@@ -157,7 +168,7 @@
                     <input type="text" id="chatInput" placeholder="اكتب رسالتك أو تفاصيل الطلب..." data-translate-placeholder="messagePlaceholder" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <div class="flex gap-2 items-center">
                         <input type="file" id="chatFile" accept="image/*,video/*" class="flex-grow bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-300 file:bg-emerald-600 file:text-white file:border-none file:rounded-lg file:px-2 file:py-1 file:cursor-pointer">
-                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-white font-bold transition shadow-md"><i class="fa-solid fa-paper-plane"></i> <span data-translate="sendBtn">إرسال</span></button>
+                        <button type="submit" id="sendMsgBtn" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-white font-bold transition shadow-md"><i class="fa-solid fa-paper-plane"></i> <span data-translate="sendBtn">إرسال</span></button>
                     </div>
                 </form>
             </div>
@@ -168,6 +179,14 @@
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-indigo-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-indigo-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> <span data-translate="customerOffersTitle">عروض الحسابات المقدمة من العملاء</span></h3>
                 <div id="adminOffersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- صفحة إدارة البلوكات للأدمن -->
+        <section id="adminBlocksTab" class="hidden space-y-6 max-w-4xl mx-auto">
+            <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-red-500/30 shadow-2xl">
+                <h3 class="text-xl font-black text-red-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-ban"></i> <span data-translate="blockedUsersPanelTitle">إدارة المستخدمين المحظورين</span></h3>
+                <div id="blockedUsersGrid" class="grid grid-cols-1 gap-3"></div>
             </div>
         </section>
 
@@ -279,6 +298,7 @@
         let storeAccountsData = [];
         let accountSliderIndexes = {};
         let selectedChatUserUid = null;
+        let blockedUsersMap = {};
 
         const translations = {
             ar: {
@@ -290,6 +310,7 @@
                 whatsappGroup: "جروب الواتساب",
                 adminPanel: "لوحة الأدمن",
                 customerOffers: "عروض العملاء",
+                blockedUsersTab: "إدارة البلوكات",
                 login: "دخول بقوقل",
                 storeTitleHighlight: "أقوى حسابات",
                 storeSubtitle: "تصفح أقوى الحسابات المتاحة، وقم بشرائها وتأكيد الدفع عبر إرسال سكرين شوت للأدمن.",
@@ -306,6 +327,7 @@
                 messagePlaceholder: "اكتب رسالتك أو تفاصيل الطلب...",
                 sendBtn: "إرسال",
                 customerOffersTitle: "عروض الحسابات المقدمة من العملاء",
+                blockedUsersPanelTitle: "إدارة المستخدمين المحظورين",
                 adminPanelTitle: "لوحة تحكم الأدمن (A&M Store)",
                 settingsTitle: "ضبط روابط التواصل والضمان",
                 saveWhatsappBtn: "حفظ الواتساب",
@@ -329,6 +351,7 @@
                 whatsappGroup: "WhatsApp Group",
                 adminPanel: "Admin Panel",
                 customerOffers: "Customer Offers",
+                blockedUsersTab: "Blocked Users",
                 login: "Google Login",
                 storeTitleHighlight: "Top Accounts",
                 storeSubtitle: "Browse top available accounts, purchase them and confirm payment by sending a screenshot to admin.",
@@ -345,6 +368,7 @@
                 messagePlaceholder: "Type your message or order details...",
                 sendBtn: "Send",
                 customerOffersTitle: "Account Offers Submitted by Customers",
+                blockedUsersPanelTitle: "Blocked Users Management",
                 adminPanelTitle: "Admin Control Panel (A&M Store)",
                 settingsTitle: "Configure Contact & Warranty Links",
                 saveWhatsappBtn: "Save WhatsApp",
@@ -398,7 +422,9 @@
             const userName = document.getElementById('userName');
             const adminTabBtn = document.getElementById('adminTabBtn');
             const adminOffersTabBtn = document.getElementById('adminOffersTabBtn');
+            const adminBlocksTabBtn = document.getElementById('adminBlocksTabBtn');
             const adminChatUsersList = document.getElementById('adminChatUsersList');
+            const adminUserControlBtns = document.getElementById('adminUserControlBtns');
 
             if (user) {
                 loginBtn.classList.add('hidden');
@@ -408,25 +434,33 @@
                 if (isAdminUser(user)) {
                     adminTabBtn.classList.remove('hidden');
                     adminOffersTabBtn.classList.remove('hidden');
+                    adminBlocksTabBtn.classList.remove('hidden');
                     adminChatUsersList.classList.remove('hidden');
+                    adminUserControlBtns.classList.remove('hidden');
                     loadAdminChatUsers();
+                    loadBlockedUsers();
                 } else {
                     adminTabBtn.classList.add('hidden');
                     adminOffersTabBtn.classList.add('hidden');
+                    adminBlocksTabBtn.classList.add('hidden');
                     adminChatUsersList.classList.add('hidden');
+                    adminUserControlBtns.classList.add('hidden');
                 }
             } else {
                 loginBtn.classList.remove('hidden');
                 userInfo.classList.add('hidden');
                 adminTabBtn.classList.add('hidden');
                 adminOffersTabBtn.classList.add('hidden');
+                adminBlocksTabBtn.classList.add('hidden');
                 adminChatUsersList.classList.add('hidden');
+                adminUserControlBtns.classList.add('hidden');
             }
+            loadBlockedUsersMap();
             loadSupportMessages();
         });
 
         function switchTab(tabName) {
-            ['storeTab', 'submitOfferTab', 'supportTab', 'adminOffersTab', 'adminTab'].forEach(t => {
+            ['storeTab', 'submitOfferTab', 'supportTab', 'adminOffersTab', 'adminBlocksTab', 'adminTab'].forEach(t => {
                 document.getElementById(t).classList.add('hidden');
             });
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
@@ -589,6 +623,110 @@
             }
         }
 
+        // نظام البلوك وحظر المستخدمين
+        function loadBlockedUsersMap() {
+            db.ref('blockedUsers').on('value', (snapshot) => {
+                blockedUsersMap = snapshot.val() || {};
+                const isBlocked = currentUser && blockedUsersMap[currentUser.uid];
+                const warningDiv = document.getElementById('blockedWarning');
+                const chatForm = document.getElementById('chatForm');
+
+                if (isBlocked && !isAdminUser(currentUser)) {
+                    if(warningDiv) warningDiv.classList.remove('hidden');
+                    if(chatForm) chatForm.classList.add('hidden');
+                } else {
+                    if(warningDiv) warningDiv.classList.add('hidden');
+                    if(chatForm) chatForm.classList.remove('hidden');
+                }
+                updateBlockButtonState();
+            });
+        }
+
+        function toggleBlockCurrentUser() {
+            if (!selectedChatUserUid) {
+                alert('الرجاء اختيار العميل من القائمة أولاً لحظره أو فك حظره.');
+                return;
+            }
+            const isCurrentlyBlocked = blockedUsersMap[selectedChatUserUid];
+            if (isCurrentlyBlocked) {
+                db.ref(`blockedUsers/${selectedChatUserUid}`).remove().then(() => {
+                    alert('تم فك الحظر عن هذا المستخدم بنجاح.');
+                    loadBlockedUsersMap();
+                });
+            } else {
+                db.ref(`blockedUsers/${selectedChatUserUid}`).set(true).then(() => {
+                    alert('تم حظر هذا المستخدم بنجاح ولن يتمكن من إرسال رسائل جديدة.');
+                    loadBlockedUsersMap();
+                });
+            }
+        }
+
+        function updateBlockButtonState() {
+            const btn = document.getElementById('blockUserBtn');
+            if (!btn) return;
+            if (selectedChatUserUid && blockedUsersMap[selectedChatUserUid]) {
+                btn.textContent = 'فك الحظر عن المستخدم';
+                btn.className = 'bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition';
+            } else {
+                btn.textContent = 'حظر هذا المستخدم';
+                btn.className = 'bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition';
+            }
+        }
+
+        function loadBlockedUsers() {
+            db.ref('blockedUsers').on('value', (snapshot) => {
+                const grid = document.getElementById('blockedUsersGrid');
+                const countBadge = document.getElementById('blocksCount');
+                grid.innerHTML = '';
+                const blocked = snapshot.val() || {};
+                const uids = Object.keys(blocked);
+                countBadge.textContent = uids.length;
+
+                if (uids.length === 0) {
+                    grid.innerHTML = '<div class="text-center text-slate-500 py-10">لا توجد أي بلوكات حالياً.</div>';
+                    return;
+                }
+
+                // جلب اسماء المستخدمين من الشات لعرضها بشكل منظم
+                db.ref('supportMessages').once('value', (msgSnap) => {
+                    const msgs = msgSnap.val() || {};
+                    const userNames = {};
+                    Object.values(msgs).forEach(m => {
+                        if(m.senderUid) userNames[m.senderUid] = m.senderName;
+                    });
+
+                    uids.forEach(uid => {
+                        const name = userNames[uid] || 'مستخدم (UID: ' + uid.substring(0,8) + ')';
+                        grid.innerHTML += `
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">${name}</h4>
+                                    <p class="text-xs text-slate-400">UID: ${uid}</p>
+                                </div>
+                                <button onclick="unblockUser('${uid}')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg text-xs font-bold text-white transition">فك الحظر</button>
+                            </div>
+                        `;
+                    });
+                });
+            });
+        }
+
+        function unblockUser(uid) {
+            db.ref(`blockedUsers/${uid}`).remove().then(() => {
+                alert('تم فك الحظر بنجاح.');
+                loadBlockedUsers();
+                loadBlockedUsersMap();
+            });
+        }
+
+        function deleteMessage(msgKey) {
+            if(confirm('هل أنت متأكد من حذف هذه الرسالة من الشات؟')) {
+                db.ref(`supportMessages/${msgKey}`).remove().then(() => {
+                    alert('تم حذف الرسالة بنجاح.');
+                });
+            }
+        }
+
         function saveWarrantyLink() {
             const url = document.getElementById('adminWarrantyInput').value;
             if(!url) {
@@ -706,6 +844,7 @@
             selectedChatUserUid = uid;
             loadAdminChatUsers();
             loadSupportMessages();
+            updateBlockButtonState();
         }
 
         async function sendMessage(e) {
@@ -714,6 +853,11 @@
                 alert('يرجى تسجيل الدخول بقوقل أولاً لإرسال سكرين شوت الدفع.');
                 return;
             }
+            if(!isAdminUser(currentUser) && blockedUsersMap[currentUser.uid]) {
+                alert('عذراً، أنت محظور من قبل الأدمن.');
+                return;
+            }
+
             const text = document.getElementById('chatInput').value;
             const isAdmin = isAdminUser(currentUser);
             const targetUid = isAdmin ? selectedChatUserUid : currentUser.uid;
@@ -771,10 +915,13 @@
                             }
 
                             chatBox.innerHTML += `
-                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
+                                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1 relative group">
                                     <div class="flex justify-between items-center text-xs">
                                         <span class="font-bold text-emerald-400">${msg.senderName}</span>
-                                        <span class="text-slate-500">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-slate-500">${new Date(msg.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</span>
+                                            ${isAdmin ? `<button onclick="deleteMessage('${key}')" class="text-red-400 hover:text-red-300 title="حذف الرسالة"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                                        </div>
                                     </div>
                                     <div class="text-slate-200 text-sm">${msg.text}</div>
                                     ${mediaHtml}
@@ -993,6 +1140,10 @@
             loadWhatsappGroup();
             loadWarrantyLink();
             loadUserOffers();
+            loadBlockedUsersMap();
+            if(isAdminUser(currentUser)) {
+                loadBlockedUsers();
+            }
         });
     </script>
 </body>
