@@ -108,7 +108,6 @@
                 <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها عبر المحفظة أو تواصل مع الأدمن مباشرة.</p>
             </div>
             <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-            <!-- خيارات التنقل بين أكثر من 5 صفحات -->
             <div id="paginationControls" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
         </section>
 
@@ -133,7 +132,6 @@
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (AM Store)</h3>
                 <div class="space-y-5">
-                    <!-- إضافة حساب جديد مع رفع أكثر من صورة أو فيديو -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (اختر عدة صور أو فيديوهات)</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -143,12 +141,13 @@
                                 <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (متعدد):</label>
                                 <input type="file" id="accFile" accept="image/*,video/*" multiple required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             </div>
-                            <input type="text" id="accPhone" placeholder="رقم التواصل أو الواتساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
+                            <!-- تم تغيير الحقل هنا -->
+                            <input type="text" id="accPhone" placeholder="رقم الدفع" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
                             <textarea id="accDesc" placeholder="تفاصيل ومميزات الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
                             <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
                         </form>
                     </div>
-                    <!-- تغيير خلفية الموقع بصورة أو فيديو من الجهاز -->
+                    <!-- تغيير الخلفية وموديل التعديل -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (اختر صورة أو فيديو من جهازك)</h4>
                         <div class="flex gap-2 items-center">
@@ -160,13 +159,39 @@
             </div>
         </section>
 
+        <!-- موديل تعديل الحساب -->
+        <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-cardBg border border-slate-700 rounded-2xl w-full max-w-lg p-6 shadow-2xl">
+                <h3 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-pen-to-square"></i> تعديل الحساب</h3>
+                <form id="editForm" class="space-y-4">
+                    <input type="hidden" id="editAccId">
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">اسم الحساب</label>
+                        <input type="text" id="editTitle" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">السعر</label>
+                        <input type="text" id="editPrice" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">رقم الدفع</label>
+                        <input type="text" id="editPhone" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">التفاصيل والمميزات</label>
+                        <textarea id="editDesc" required rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500"></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium transition">إلغاء</button>
+                        <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition shadow-lg">حفظ التعديلات</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </main>
 
-    <footer class="bg-cardBg/90 border-t border-slate-800 py-4 text-center text-xs text-slate-400">
-        جميع الحقوق محفوظة &copy; 2026 - AM Store لبيع حسابات بيس موبايل
-    </footer>
-
-    <!-- سكربت التشغيل والتخزين الدائم -->
+    <!-- سكربت التشغيل -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBMpZ7CXOJbgKpMqOjzsbbCcpHBlslU3mw",
@@ -379,7 +404,7 @@
                         <div class="p-4 space-y-2 flex-grow">
                             <h4 class="font-bold text-white text-base">${acc.title}</h4>
                             <p class="text-xs text-slate-300 line-clamp-2">${acc.desc}</p>
-                            <div class="text-xs text-slate-400"><i class="fa-solid fa-phone text-emerald-400"></i> الرقم: ${acc.phone}</div>
+                            <div class="text-xs text-slate-400"><i class="fa-solid fa-phone text-emerald-400"></i> رقم الدفع: ${acc.phone}</div>
                             <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
                         </div>
                         <div class="p-4 pt-0 flex flex-wrap gap-2">
@@ -387,6 +412,7 @@
                                 <i class="fa-solid fa-wallet"></i> دفع بالمحفظة
                             </button>
                             ${isAdmin ? `
+                                <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
                                 <button onclick="toggleSoldStatus('${acc.id}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
                                 <button onclick="deleteAdminAccount('${acc.id}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
                             ` : ''}
@@ -422,6 +448,35 @@
             switchTab('support');
         }
 
+        // خصائص التعديل
+        function openEditModal(id, title, price, phone, desc) {
+            document.getElementById('editAccId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editPrice').value = price;
+            document.getElementById('editPhone').value = phone;
+            document.getElementById('editDesc').value = desc;
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('editAccId').value;
+            const title = document.getElementById('editTitle').value;
+            const price = document.getElementById('editPrice').value;
+            const phone = document.getElementById('editPhone').value;
+            const desc = document.getElementById('editDesc').value;
+
+            db.ref(`adminAccounts/${id}`).update({ title, price, phone, desc }).then(() => {
+                alert('تم تعديل الحساب بنجاح!');
+                closeEditModal();
+                loadStoreAccounts();
+            });
+        });
+
         function toggleSoldStatus(key, currentStatus) {
             const newStatus = currentStatus === 'متاح' ? 'تم البيع' : 'متاح';
             db.ref(`adminAccounts/${key}`).update({ status: newStatus });
@@ -443,12 +498,13 @@
                 const filesData = await readFileAsDataURL(fileInput);
                 const bg = filesData[0];
                 const container = document.getElementById('bgContainer');
+                
                 if (bg.type.includes('video')) {
                     container.innerHTML = `<video autoplay muted loop id="bg-media" class="w-full h-full object-cover"><source src="${bg.data}" type="${bg.type}"></video>`;
                 } else {
                     container.innerHTML = `<div id="bg-media" class="w-full h-full object-cover" style="background: url('${bg.data}') no-repeat center center fixed; background-size: cover; width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1; opacity:0.25;"></div>`;
                 }
-                // حفظ الخلفية في الـ localStorage لتبقى حتى بعد الـ Refresh
+                
                 localStorage.setItem('amStoreBg', JSON.stringify(bg));
                 alert('تم تحديث خلفية الموقع بنجاح!');
             } catch (err) {
@@ -456,12 +512,12 @@
             }
         }
 
-        // استرجاع الخلفية المحفوظة عند فتح الموقع
         function loadSavedBackground() {
             const savedBg = localStorage.getItem('amStoreBg');
             if (savedBg) {
                 const bg = JSON.parse(savedBg);
                 const container = document.getElementById('bgContainer');
+                
                 if (bg.type.includes('video')) {
                     container.innerHTML = `<video autoplay muted loop id="bg-media" class="w-full h-full object-cover"><source src="${bg.data}" type="${bg.type}"></video>`;
                 } else {
@@ -470,7 +526,6 @@
             }
         }
 
-        // إرسال الرسائل وسكرين شوت الدفع (تظهر للأدمن وصاحبها فقط)
         async function sendMessage(e) {
             e.preventDefault();
             if(!currentUser) {
@@ -511,7 +566,6 @@
                     let hasMessages = false;
                     Object.keys(data).forEach(key => {
                         const msg = data[key];
-                        // تظهر الرسالة فقط إذا كان المستخدم هو الأدمن أو صاحب الرسالة نفسها
                         if(isAdmin || (currentUser && msg.senderUid === currentUser.uid)) {
                             hasMessages = true;
                             const isVideo = msg.mediaType && msg.mediaType.includes('video');
@@ -537,7 +591,7 @@
                         }
                     });
                     if(!hasMessages) {
-                        chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل سابقة. أرسل استفسارك أو سكرين شوت الدفع هنا.</div>';
+                        chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">لا توجد رسائل سابقة.</div>';
                     }
                     chatBox.scrollTop = chatBox.scrollHeight;
                 } else {
@@ -546,7 +600,6 @@
             });
         }
 
-        // تشغيل الوظائف عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedBackground();
             loadStoreAccounts();
