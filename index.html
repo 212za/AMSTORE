@@ -58,7 +58,7 @@
         <source src="https://assets.mixkit.co/videos/preview/mixkit-football-player-running-with-the-ball-41656-large.mp4" type="video/mp4">
     </video>
 
-    <!-- الهيدر (شريط التنقل العلوي) -->
+    <!-- الهيدر -->
     <header class="bg-cardBg/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('store')">
@@ -99,16 +99,17 @@
         </div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
+    <!-- المحتوى -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
-        <!-- 1. قسم المتجر الأساسي -->
+        <!-- 1. المتجر الأساسي -->
         <section id="storeTab" class="space-y-6">
             <div class="text-center space-y-2">
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white"><span class="text-accentGreen">أقوى حسابات</span> eFootball Mobile</h1>
                 <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها عبر المحفظة أو تواصل مع الأدمن مباشرة.</p>
             </div>
             <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="paginationControls" class="flex justify-center gap-2 mt-6"></div>
         </section>
 
         <!-- 2. قسم المجتمع -->
@@ -144,7 +145,7 @@
             </div>
         </section>
 
-        <!-- 4. لوحة تحكم الأدمن (تظهر فقط لصلاح الدين) -->
+        <!-- 4. لوحة تحكم الأدمن -->
         <section id="adminTab" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (حوده شوب)</h3>
@@ -156,7 +157,7 @@
                             <input type="text" id="accPrice" placeholder="السعر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <div class="sm:col-span-2 space-y-1">
                                 <label class="text-xs text-slate-400">اختر صورة أو فيديو الحساب من جهازك:</label>
-                                <input type="file" id="accFile" accept="image/*,video/*" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
+                                <input type="file" id="accFile" accept="image/*,video/*" multiple required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             </div>
                             <input type="text" id="accPhone" placeholder="رقم التواصل أو النشر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
                             <textarea id="accDesc" placeholder="تفاصيل ومميزات الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
@@ -176,11 +177,12 @@
 
     </main>
 
+    <!-- الفوتر -->
     <footer class="bg-cardBg/90 border-t border-slate-800 py-4 text-center text-xs text-slate-400">
         جميع الحقوق محفوظة &copy; 2026 - حوده شوب لبيع حسابات بيس موبايل
     </footer>
 
-    <!-- سكربت التشغيل المتوافق والوظائف البرمجية -->
+    <!-- سكربت التشغيل المتوافق -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBMpZ7CXOJbgKpMqOjzsbbCcpHBlslU3mw",
@@ -200,6 +202,10 @@
         const ADMIN_EMAIL = "salaheldeen982@gmail.com";
         let currentUser = null;
         let currentLang = 'ar';
+        let currentStorePage = 1;
+        const itemsPerPage = 6;
+        let storeAccountsData = [];
+        let accountSliderIndexes = {};
 
         const translations = {
             ar: { store: "المتجر", community: "المجتمع", support: "خدمة العملاء", admin: "لوحة الأدمن", login: "دخول بقوقل" },
@@ -249,7 +255,6 @@
                 userInfo.classList.add('hidden');
                 adminTabBtn.classList.add('hidden');
             }
-            loadStoreAccounts();
             loadCommunityPosts();
             loadSupportMessages();
         });
@@ -261,22 +266,17 @@
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
         }
 
-        // مساعدة لقراءة الملفات المرفوعة من الجهاز وتحويلها إلى Base64
         function readFileAsDataURL(fileInput) {
-            return new Promise((resolve, reject) => {
-                const file = fileInput.files[0];
-                if (!file) {
-                    resolve('');
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (error) => reject(error);
-                reader.readAsDataURL(file);
-            });
+            return Promise.all(Array.from(fileInput.files).map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve({ data: e.target.result, type: file.type });
+                    reader.onerror = (error) => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            }));
         }
 
-        // إضافة حساب جديد مع دعم رفع الصور/الفيديوهات من الجهاز
         async function addAdminAccount(e) {
             e.preventDefault();
             const title = document.getElementById('accTitle').value;
@@ -286,70 +286,146 @@
 
             try {
                 const fileInput = document.getElementById('accFile');
-                const mediaData = await readFileAsDataURL(fileInput);
+                const filesData = await readFileAsDataURL(fileInput);
 
                 db.ref('adminAccounts').push({
-                    title, price, mediaUrl: mediaData, mediaType: fileInput.files[0] ? fileInput.files[0].type : '', phone, desc, status: 'متاح', timestamp: Date.now()
+                    title, price, mediaFiles: filesData, phone, desc, status: 'متاح', timestamp: Date.now()
                 }).then(() => {
                     alert('تم نشر الحساب في المتجر بنجاح!');
                     document.getElementById('adminAddAccForm').reset();
                     switchTab('store');
                 });
             } catch (err) {
-                alert('حدث خطأ أثناء قراءة الملف: ' + err.message);
+                alert('حدث خطأ أثناء تحميل الملفات: ' + err.message);
+            }
+        }
+
+        function nextImage(accountId, direction) {
+            if (!storeAccountsData) return;
+            const account = storeAccountsData.find(acc => acc.id === accountId);
+            if (!account || !account.mediaFiles || account.mediaFiles.length <= 1) return;
+            
+            if (accountSliderIndexes[accountId] === undefined) {
+                accountSliderIndexes[accountId] = 0;
+            }
+            
+            if (direction === 'next') {
+                accountSliderIndexes[accountId] = (accountSliderIndexes[accountId] + 1) % account.mediaFiles.length;
+            } else {
+                accountSliderIndexes[accountId] = (accountSliderIndexes[accountId] - 1 + account.mediaFiles.length) % account.mediaFiles.length;
+            }
+            
+            updateAccountMediaView(accountId);
+        }
+
+        function updateAccountMediaView(accountId) {
+            const account = storeAccountsData.find(acc => acc.id === accountId);
+            const imgElement = document.getElementById(`media-img-${accountId}`);
+            const index = accountSliderIndexes[accountId] || 0;
+            if (account && account.mediaFiles && account.mediaFiles[index]) {
+                imgElement.src = account.mediaFiles[index].data;
             }
         }
 
         function loadStoreAccounts() {
             db.ref('adminAccounts').on('value', (snapshot) => {
-                const grid = document.getElementById('adminAccountsGrid');
-                grid.innerHTML = '';
                 const data = snapshot.val();
-                const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
-
+                storeAccountsData = [];
+                
                 if (data) {
                     Object.keys(data).reverse().forEach(key => {
-                        const acc = data[key];
-                        const isSold = acc.status === 'تم البيع';
-                        const isVideo = acc.mediaType && acc.mediaType.includes('video');
+                        storeAccountsData.push({ id: key, ...data[key] });
+                    });
+                }
+                renderStoreAccounts();
+                renderPaginationControls();
+            });
+        }
 
-                        let mediaHtml = '';
-                        if (acc.mediaUrl) {
-                            if (isVideo) {
-                                mediaHtml = `<video src="${acc.mediaUrl}" controls class="h-52 w-full object-cover"></video>`;
-                            } else {
-                                mediaHtml = `<img src="${acc.mediaUrl}" alt="${acc.title}" class="h-52 w-full object-cover">`;
-                            }
-                        }
+        function renderStoreAccounts() {
+            const grid = document.getElementById('adminAccountsGrid');
+            grid.innerHTML = '';
+            
+            if (storeAccountsData.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">لا توجد حسابات معروضة حالياً.</div>';
+                return;
+            }
+            
+            const start = (currentStorePage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = storeAccountsData.slice(start, end);
+            const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
 
-                        grid.innerHTML += `
-                            <div class="bg-cardBg/90 backdrop-blur border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between card-hover transition-all">
-                                <div class="relative group">
-                                    ${mediaHtml}
-                                    <span class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-bold ${isSold ? 'bg-red-500/80 text-white' : 'bg-emerald-500/80 text-white'}">${acc.status}</span>
-                                </div>
-                                <div class="p-4 space-y-2 flex-grow">
-                                    <h4 class="font-bold text-white text-base">${acc.title}</h4>
-                                    <p class="text-xs text-slate-300 line-clamp-2">${acc.desc}</p>
-                                    <div class="text-xs text-slate-400"><i class="fa-solid fa-phone text-emerald-400"></i> الرقم: ${acc.phone}</div>
-                                    <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
-                                </div>
-                                <div class="p-4 pt-0 flex flex-wrap gap-2">
-                                    <button onclick="payWithWallet('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
-                                        <i class="fa-solid fa-wallet"></i> دفع بالمحفظة
-                                    </button>
-                                    ${isAdmin ? `
-                                        <button onclick="toggleSoldStatus('${key}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
-                                        <button onclick="deleteAdminAccount('${key}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
-                                    ` : ''}
-                                </div>
+            pageData.forEach(acc => {
+                const isSold = acc.status === 'تم البيع';
+                let mediaHtml = '';
+                
+                if (acc.mediaFiles && acc.mediaFiles.length > 0) {
+                    const currentIndex = accountSliderIndexes[acc.id] || 0;
+                    const currentMedia = acc.mediaFiles[currentIndex];
+                    const isVideo = currentMedia.type.includes('video');
+                    
+                    if (isVideo) {
+                        mediaHtml = `<video src="${currentMedia.data}" controls class="h-52 w-full object-cover"></video>`;
+                    } else {
+                        mediaHtml = `<img id="media-img-${acc.id}" src="${currentMedia.data}" alt="${acc.title}" class="h-52 w-full object-cover">`;
+                    }
+
+                    if (acc.mediaFiles.length > 1) {
+                        mediaHtml += `
+                            <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+                                <button onclick="nextImage('${acc.id}', 'prev')" class="bg-black/60 text-white p-1 rounded-full text-xs w-8 h-8"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button onclick="nextImage('${acc.id}', 'next')" class="bg-black/60 text-white p-1 rounded-full text-xs w-8 h-8"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         `;
-                    });
-                } else {
-                    grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">لا توجد حسابات معروضة حالياً.</div>';
+                    }
                 }
+
+                grid.innerHTML += `
+                    <div class="bg-cardBg/90 backdrop-blur border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between card-hover transition-all">
+                        <div class="relative group">
+                            ${mediaHtml}
+                            <span class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-bold ${isSold ? 'bg-red-500/80 text-white' : 'bg-emerald-500/80 text-white'}">${acc.status}</span>
+                        </div>
+                        <div class="p-4 space-y-2 flex-grow">
+                            <h4 class="font-bold text-white text-base">${acc.title}</h4>
+                            <p class="text-xs text-slate-300 line-clamp-2">${acc.desc}</p>
+                            <div class="text-xs text-slate-400"><i class="fa-solid fa-phone text-emerald-400"></i> الرقم: ${acc.phone}</div>
+                            <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
+                        </div>
+                        <div class="p-4 pt-0 flex flex-wrap gap-2">
+                            <button onclick="payWithWallet('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-wallet"></i> دفع بالمحفظة
+                            </button>
+                            ${isAdmin ? `
+                                <button onclick="toggleSoldStatus('${acc.id}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
+                                <button onclick="deleteAdminAccount('${acc.id}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        function renderPaginationControls() {
+            const controls = document.getElementById('paginationControls');
+            controls.innerHTML = '';
+            
+            const totalPages = Math.ceil(storeAccountsData.length / itemsPerPage);
+            if (totalPages <= 1) return;
+
+            for (let i = 1; i <= totalPages; i++) {
+                controls.innerHTML += `
+                    <button onclick="goToPage(${i})" class="px-4 py-2 rounded-xl font-bold text-sm ${i === currentStorePage ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">${i}</button>
+                `;
+            }
+        }
+
+        function goToPage(page) {
+            currentStorePage = page;
+            renderStoreAccounts();
+            renderPaginationControls();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function payWithWallet(title, price) {
@@ -376,7 +452,6 @@
             }
         }
 
-        // المجتمع مع دعم رفع الصور/الفيديوهات من الجهاز
         async function createPost(e) {
             e.preventDefault();
             if(!currentUser) {
@@ -451,7 +526,6 @@
             db.ref(`communityPosts/${key}`).update({ likes: currentLikes + 1 });
         }
 
-        // خدمة العملاء مع دعم إرسال سكرين شوت أو صور من الجهاز
         async function sendMessage(e) {
             e.preventDefault();
             if(!currentUser) {
@@ -519,6 +593,11 @@
                 }
             });
         }
+
+        // استدعاء جلب الحسابات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStoreAccounts();
+        });
     </script>
 </body>
 </html>
