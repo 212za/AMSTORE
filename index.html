@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حوده شوب - متجر حسابات بيس موبايل</title>
-    <!-- Tailwind CSS و FontAwesome للأيقونات -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -29,7 +28,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
         }
-        /* خلفية الموقع الديناميكية (فيديو أو صورة) */
         #bg-media {
             position: fixed;
             top: 0;
@@ -45,19 +43,14 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(0, 255, 102, 0.2);
         }
-        transition-all {
-            transition: all 0.3s ease;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
-    <!-- خلفية الموقع الافتراضية (يمكن للأدمن تغييرها) -->
     <video autoplay muted loop id="bg-media">
         <source src="https://assets.mixkit.co/videos/preview/mixkit-football-player-running-with-the-ball-41656-large.mp4" type="video/mp4">
     </video>
 
-    <!-- الهيدر وشريط التنقل -->
     <header class="bg-cardBg/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('store')">
@@ -81,12 +74,10 @@
             </nav>
 
             <div class="flex items-center gap-3">
-                <!-- زر تغيير اللغات -->
-                <button onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded-lg font-bold border border-slate-700">
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded-lg font-bold border border-slate-700">
                     <i class="fa-solid fa-globe text-accentBlue"></i> <span id="langText">EN</span>
                 </button>
 
-                <!-- تسجيل الدخول -->
                 <div id="authContainer">
                     <button id="loginBtn" onclick="loginWithGoogle()" class="bg-white text-slate-900 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 hover:bg-slate-100 transition shadow-md">
                         <i class="fa-brands fa-google text-red-500"></i> <span data-translate="login">دخول بقوقل</span>
@@ -100,80 +91,60 @@
         </div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
-        <!-- 1. المتجر الأساسي (يعرض حسابات الأدمن مع تقليب الصور، الحالة، التواصل والحفظ) -->
         <section id="storeTab" class="space-y-6">
             <div class="text-center space-y-2">
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white"><span class="text-accentGreen">أقوى حسابات</span> eFootball Mobile</h1>
-                <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، تواصل مباشرة للشراء، أو احفظ الحساب للرجوع إليه لاحقاً.</p>
+                <p class="text-slate-400 text-xs sm:text-sm">تصفح أقوى الحسابات المتاحة، وقم بشرائها عبر المحفظة، أو احفظها للرجوع إليها لاحقاً.</p>
             </div>
-            <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- يتم جلب الحسابات من الفايربيس ديناميكياً -->
-            </div>
+            <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
-        <!-- 2. صفحة المجتمع (تفاعلية مثل فيسبوك: نشر، تعليقات، إعجاب، تنزيل صور) -->
         <section id="communityTab" class="hidden space-y-6 max-w-2xl mx-auto">
-            <!-- صندوق إنشاء منشور جديد -->
             <div class="bg-cardBg/90 backdrop-blur p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold mb-3 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-pen-to-square"></i> شارك حسابك أو إنجازك مع المجتمع</h3>
                 <form id="postForm" onsubmit="createPost(event)" class="space-y-3">
-                    <input type="text" id="postTitle" placeholder="عنوان المنشور (مثلاً: حساب أساطير قوي جداً للبيع أو البدل)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="postTitle" placeholder="عنوان المنشور" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <textarea id="postDesc" placeholder="اكتب تفاصيل حسابك أو رسالتك..." rows="3" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"></textarea>
                     <input type="text" id="postImage" placeholder="رابط صورة أو فيديو الحساب (اختياري)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-sm transition shadow-lg shadow-emerald-600/20">نشر في المجتمع</button>
                 </form>
             </div>
-
-            <!-- خلاصة منشورات المجتمع -->
-            <div id="postsFeed" class="space-y-5">
-                <!-- المنشورات -->
-            </div>
+            <div id="postsFeed" class="space-y-5"></div>
         </section>
 
-        <!-- 3. خدمة العملاء (الرسائل تظهر للأدمن فقط والمستخدم نفسه) -->
         <section id="supportTab" class="hidden max-w-xl mx-auto space-y-4">
             <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold text-lg mb-2 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> خدمة العملاء والدعم المباشر</h3>
-                <p class="text-xs text-slate-400 mb-4">راسلنا بأي استفسار وسيقوم الأدمن بالرد عليك هنا حصرياً بخصوصية تامة.</p>
-                
-                <div id="chatMessages" class="bg-slate-950 p-4 rounded-xl h-72 overflow-y-auto space-y-3 mb-4 text-sm border border-slate-800 flex flex-col">
-                    <!-- الرسائل -->
-                </div>
-                
+                <p class="text-xs text-slate-400 mb-4">راسلنا بأي استفسار وسيقوم الأدمن بالرد عليك هنا حصرياً، ولتأكيد الدفع يمكنك إرسال سكرين شوت هنا.</p>
+                <div id="chatMessages" class="bg-slate-950 p-4 rounded-xl h-72 overflow-y-auto space-y-3 mb-4 text-sm border border-slate-800 flex flex-col"></div>
                 <form id="chatForm" onsubmit="sendMessage(event)" class="flex gap-2">
-                    <input type="text" id="chatInput" placeholder="اكتب رسالتك للأدمن هنا..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="chatInput" placeholder="اكتب رسالتك أو ضع رابط سكرين شوت الدفع..." required class="flex-grow bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 px-5 rounded-xl text-white font-bold transition shadow-md"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
             </div>
         </section>
 
-        <!-- 4. لوحة تحكم الأدمن (تظهر حصرياً للبريد المخصص) -->
         <section id="adminTab" class="hidden space-y-6 max-w-4xl mx-auto">
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (حوده شوب)</h3>
-                
                 <div class="space-y-5">
-                    <!-- إضافة حساب للمتجر -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر الأساسي</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input type="text" id="accTitle" placeholder="اسم الحساب (مثلاً: حساب أساطير 102)" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <input type="text" id="accPrice" placeholder="السعر (مثلاً: 500 جنيه / 10$)" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <input type="text" id="accImg1" placeholder="رابط الصورة الأولى (رئيسية)" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <input type="text" id="accImg2" placeholder="رابط الصورة الثانية (للتقليب الاختياري)" class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <textarea id="accDesc" placeholder="مميزات الحساب واللاعبين بالتفصيل..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
+                            <input type="text" id="accTitle" placeholder="اسم الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <input type="text" id="accPrice" placeholder="السعر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <input type="text" id="accImg1" placeholder="رابط الصورة الأولى" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <input type="text" id="accImg2" placeholder="رابط الصورة الثانية" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <textarea id="accDesc" placeholder="مميزات الحساب واللاعبين..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
                             <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
                         </form>
                     </div>
-
-                    <!-- تخصيص خلفية الموقع -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (رابط فيديو أو صورة متحركة)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع</h4>
                         <div class="flex gap-2">
-                            <input type="text" id="bgInputUrl" placeholder="أدخل رابط فيديو (mp4) أو صورة خلفية" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <input type="text" id="bgInputUrl" placeholder="أدخل رابط فيديو أو صورة متحركة" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <button onclick="updateBackground()" class="bg-amber-600 hover:bg-amber-500 px-5 rounded-lg text-white text-sm font-bold transition">تحديث الخلفية</button>
                         </div>
                     </div>
@@ -183,12 +154,10 @@
 
     </main>
 
-    <!-- الفوتر -->
     <footer class="bg-cardBg/90 border-t border-slate-800 py-4 text-center text-xs text-slate-400">
         جميع الحقوق محفوظة &copy; 2026 - حوده شوب لبيع حسابات بيس موبايل
     </footer>
 
-    <!-- سكربت الفايربيس وتطبيق الويب المتكامل -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase/app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase/auth.js";
@@ -209,19 +178,17 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // البريد المخصص للأدمن تماماً كما طلبت
         const ADMIN_EMAIL = "salaheldeen982@gmail.com"; 
         let currentUser = null;
         let currentLang = 'ar';
 
-        // الترجمة البسيطة بين العربي والإنكليزي
         const translations = {
             ar: { store: "المتجر", community: "المجتمع", support: "خدمة العملاء", admin: "لوحة الأدمن", login: "دخول بقوقل" },
             en: { store: "Store", community: "Community", support: "Support", admin: "Admin Panel", login: "Google Login" }
         };
 
         window.toggleLanguage = function() {
-            currentLang = currentLang === 'ar' ? 'en';
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
             document.getElementById('langText').textContent = currentLang === 'ar' ? 'EN' : 'AR';
             document.getElementById('htmlRoot').setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
             document.getElementById('htmlRoot').setAttribute('lang', currentLang);
@@ -253,7 +220,6 @@
                 userInfo.classList.remove('hidden');
                 userName.textContent = user.displayName;
 
-                // إظهار لوحة الأدمن فقط لبريدك المحدد
                 if (user.email === ADMIN_EMAIL) {
                     adminTabBtn.classList.remove('hidden');
                 } else {
@@ -264,7 +230,6 @@
                 userInfo.classList.add('hidden');
                 adminTabBtn.classList.add('hidden');
             }
-            // إعادة تحميل الحسابات والرسائل لتحديث صلاحيات الأدمن
             loadStoreAccounts();
             loadCommunityPosts();
             loadSupportMessages();
@@ -277,7 +242,6 @@
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
         };
 
-        // --- إدارة متجر الأدمن الأساسي ---
         window.addAdminAccount = function(e) {
             e.preventDefault();
             const title = document.getElementById('accTitle').value;
@@ -308,13 +272,13 @@
                     Object.keys(data).reverse().forEach(key => {
                         const acc = data[key];
                         const isSold = acc.status === 'تم البيع';
-                        const images = acc.images || [acc.image];
+                        const images = acc.images || [];
 
                         grid.innerHTML += `
                             <div class="bg-cardBg/90 backdrop-blur border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between card-hover transition-all">
                                 <div class="relative group">
-                                    <img id="acc-img-${key}" src="${images[0]}" alt="${acc.title}" class="h-52 w-full object-cover transition duration-300">
-                                    ${images.length > 1 ? `<button onclick="nextImage('${key}',${JSON.stringify(images).replace(/"/g, '&quot;')})" class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs px-2.5 py-1 rounded-lg backdrop-blur hover:bg-emerald-600 transition"><i class="fa-solid fa-images"></i> تقليب الصور</button>` : ''}
+                                    <img id="acc-img-${key}" src="${images[0] || ''}" alt="${acc.title}" class="h-52 w-full object-cover transition duration-300">
+                                    ${images.length > 1 ? `<button onclick="nextImage('${key}', ${JSON.stringify(images).replace(/"/g, '&quot;')})" class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs px-2.5 py-1 rounded-lg backdrop-blur hover:bg-emerald-600 transition"><i class="fa-solid fa-images"></i> تقليب</button>` : ''}
                                     <span class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-bold ${isSold ? 'bg-red-500/80 text-white' : 'bg-emerald-500/80 text-white'}">${acc.status}</span>
                                 </div>
                                 <div class="p-4 space-y-2 flex-grow">
@@ -323,10 +287,10 @@
                                     <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
                                 </div>
                                 <div class="p-4 pt-0 flex flex-wrap gap-2">
-                                    <a href="https://wa.me/?text=مرحباً، أريد شراء حساب (${encodeURIComponent(acc.title)}) المعروض في حوده شوب" target="_blank" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
-                                        <i class="fa-brands fa-whatsapp text-sm"></i> تواصل للشراء
-                                    </a>
-                                    <button onclick="saveAccountLocally('${acc.title}', '${acc.price}')" class="bg-slate-800 hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs text-slate-200 transition" title="حفظ الحساب"><i class="fa-solid fa-bookmark"></i></button>
+                                    <button onclick="payWithWallet('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-wallet"></i> دفع بالمحفظة
+                                    </button>
+                                    <button onclick="saveAccountLocally('${acc.title}', '${acc.price}')" class="bg-slate-800 hover:bg-slate-700 px-3 py-2.5 rounded-xl text-xs text-slate-200 transition" title="حفظ"><i class="fa-solid fa-bookmark"></i></button>
                                     ${isAdmin ? `
                                         <button onclick="toggleSoldStatus('${key}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
                                         <button onclick="deleteAdminAccount('${key}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
@@ -347,6 +311,11 @@
             imgEl.src = images[nextIndex];
         };
 
+        window.payWithWallet = function(title, price) {
+            alert(`تم خصم المبلغ (${price}) من المحفظة بنجاح لشراء حساب (${title}). يرجى الذهاب لخدمة العملاء لإرسال سكرين شوت التأكيد.`);
+            switchTab('support');
+        };
+
         window.toggleSoldStatus = function(key, currentStatus) {
             const newStatus = currentStatus === 'متاح' ? 'تم البيع' : 'متاح';
             update(ref(db, `adminAccounts/${key}`), { status: newStatus });
@@ -362,7 +331,6 @@
             alert(`تم حفظ الحساب (${title} - ${price}) في متصفحك بنجاح!`);
         };
 
-        // --- تحديث الخلفية بواسطة الأدمن ---
         window.updateBackground = function() {
             const url = document.getElementById('bgInputUrl').value;
             if(url) {
@@ -372,7 +340,6 @@
             }
         };
 
-        // --- صفحة المجتمع (نشر، لايك، تعليقات، تنزيل صور) ---
         window.createPost = function(e) {
             e.preventDefault();
             if(!currentUser) {
@@ -416,7 +383,7 @@
                                     <div class="relative group rounded-xl overflow-hidden">
                                         <img src="${post.image}" class="w-full h-64 object-cover">
                                         <a href="${post.image}" download target="_blank" class="absolute bottom-3 right-3 bg-slate-900/80 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur transition flex items-center gap-1.5">
-                                            <i class="fa-solid fa-download"></i> تنزيل الصورة
+                                            <i class="fa-solid fa-download"></i> تنزيل
                                         </a>
                                     </div>
                                 ` : ''}
@@ -424,9 +391,6 @@
                                     <button onclick="likePost('${key}', ${post.likes || 0})" class="text-slate-400 hover:text-red-400 transition flex items-center gap-1 font-semibold">
                                         <i class="fa-solid fa-heart text-red-500"></i> <span>${post.likes || 0}</span> إعجاب
                                     </button>
-                                    <a href="https://wa.me/?text=مرحباً، شاهدت منشورك (${encodeURIComponent(post.title)}) في حوده شوب وأريد التواصل معك" target="_blank" class="text-emerald-400 hover:underline text-xs flex items-center gap-1 font-semibold">
-                                        <i class="fa-brands fa-whatsapp"></i> تواصل مع الناشر
-                                    </a>
                                 </div>
                             </div>
                         `;
@@ -439,7 +403,6 @@
             update(ref(db, `communityPosts/${key}`), { likes: currentLikes + 1 });
         };
 
-        // --- خدمة العملاء والرسائل الخاصة للأدمن ---
         window.sendMessage = function(e) {
             e.preventDefault();
             if(!currentUser) {
@@ -467,7 +430,6 @@
                 if (data) {
                     Object.keys(data).forEach(key => {
                         const msg = data[key];
-                        // يرى الأدمن جميع الرسائل الواردة، بينما يرى كل مستخدم رسائله الشخصية فقط
                         if(isAdmin || (currentUser && msg.senderUid === currentUser.uid)) {
                             chatBox.innerHTML += `
                                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1">
