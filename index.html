@@ -72,8 +72,15 @@
                 <button onclick="switchTab('store')" id="btnStore" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-store"></i> <span data-translate="store">المتجر</span>
                 </button>
+                <button onclick="switchTab('warranty')" id="btnWarranty" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved text-accentBlue"></i> <span>الضمان</span>
+                </button>
                 <button onclick="switchTab('support')" id="btnSupport" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-headset"></i> <span data-translate="support">الأدمن</span>
+                </button>
+                <!-- زر عرض حساب للعملاء -->
+                <button onclick="switchTab('submitOffer')" id="btnSubmitOffer" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
+                    <i class="fa-solid fa-plus-circle"></i> <span>عرض حسابك</span>
                 </button>
                 <!-- زر جروب الواتساب يظهر للجميع -->
                 <a id="whatsappGroupBtn" href="#" target="_blank" class="hidden px-3.5 py-2 rounded-xl bg-green-600 hover:bg-green-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
@@ -81,6 +88,10 @@
                 </a>
                 <button id="adminTabBtn" onclick="switchTab('admin')" class="hidden px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-lock"></i> <span data-translate="admin">لوحة الأدمن</span>
+                </button>
+                <!-- زر عروض العملاء الخاص بالأدمن -->
+                <button id="adminOffersTabBtn" onclick="switchTab('adminOffers')" class="hidden px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg">
+                    <i class="fa-solid fa-list-check"></i> <span>عروض العملاء (<span id="offersCount">0</span>)</span>
                 </button>
             </nav>
 
@@ -115,6 +126,40 @@
             <div id="paginationControls" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
         </section>
 
+        <!-- صفحة الضمان -->
+        <section id="warrantyTab" class="hidden max-w-3xl mx-auto space-y-4">
+            <div class="bg-cardBg/90 backdrop-blur p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                <h3 class="text-2xl font-black text-accentBlue flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> ضمان AM Store</h3>
+                <div id="warrantyContent" class="text-slate-300 text-sm leading-relaxed space-y-3 whitespace-pre-line">
+                    جاري تحميل تفاصيل الضمان والأمان...
+                </div>
+                <div id="warrantyAdminEditContainer" class="hidden pt-4 border-t border-slate-800">
+                    <h4 class="text-amber-400 font-bold text-sm mb-2">تعديل محتوى الضمان (للأدمن فقط):</h4>
+                    <textarea id="warrantyEditText" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500 mb-2"></textarea>
+                    <button onclick="saveWarrantyContent()" class="bg-amber-600 hover:bg-amber-500 px-5 py-2.5 rounded-xl text-white font-bold text-xs transition">حفظ التعديلات</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحة عرض حساب للعملاء -->
+        <section id="submitOfferTab" class="hidden max-w-xl mx-auto space-y-4">
+            <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-slate-800 shadow-xl">
+                <h3 class="font-bold text-lg mb-2 text-blue-400 flex items-center gap-2"><i class="fa-solid fa-plus-circle"></i> عرض حسابك للبيع في المتجر</h3>
+                <p class="text-xs text-slate-400 mb-4">املأ بيانات حسابك وارفع الصور (من 1 إلى 4 صور) والفيديوهات ليتم مراجعتها ونشرها من قبل الأدمن.</p>
+                <form id="submitOfferForm" onsubmit="submitUserOffer(event)" class="space-y-3">
+                    <input type="text" id="offerTitle" placeholder="اسم الحساب أو تفاصيله باختصار" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="offerPrice" placeholder="السعر المطلوب" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <input type="text" id="offerPhone" placeholder="رقم هاتفك أو وسيلة التواصل" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white">
+                    <textarea id="offerDesc" placeholder="تفاصيل ومميزات الحساب..." required rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white"></textarea>
+                    <div class="space-y-1">
+                        <label class="text-xs text-slate-400">اختر صور الحساب (حتى 4 صور وفيديوهات):</label>
+                        <input type="file" id="offerFiles" accept="image/*,video/*" multiple required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-300 file:bg-blue-600 file:text-white file:border-none file:rounded-lg file:px-2 file:py-1 file:cursor-pointer">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl text-white font-bold transition shadow-md">إرسال الحساب للأدمن</button>
+                </form>
+            </div>
+        </section>
+
         <!-- 2. صفحة الأدمن (خدمة العملاء وتأكيد الدفع) -->
         <section id="supportTab" class="hidden max-w-xl mx-auto space-y-4">
             <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
@@ -128,6 +173,14 @@
                         <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl text-white font-bold transition shadow-md"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
                     </div>
                 </form>
+            </div>
+        </section>
+
+        <!-- صفحة عروض العملاء للأدمن -->
+        <section id="adminOffersTab" class="hidden space-y-6 max-w-4xl mx-auto">
+            <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-indigo-500/30 shadow-2xl">
+                <h3 class="text-xl font-black text-indigo-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> عروض الحسابات المقدمة من العملاء</h3>
+                <div id="adminOffersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
         </section>
 
@@ -146,22 +199,22 @@
                     </div>
 
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (اختر عدة صور أو فيديوهات)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب جديد للمتجر (حتى 4 صور وفيديوهات متعددة)</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <input type="text" id="accTitle" placeholder="اسم الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <input type="text" id="accPrice" placeholder="السعر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <div class="sm:col-span-2 space-y-1">
-                                <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (متعدد):</label>
+                                <label class="text-xs text-slate-400">اختر صور أو فيديوهات الحساب من جهازك (حتى 4 صور وفيديوهات):</label>
                                 <input type="file" id="accFile" accept="image/*,video/*" multiple required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-amber-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             </div>
                             <input type="text" id="accPhone" placeholder="رقم الدفع" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
                             <textarea id="accDesc" placeholder="تفاصيل ومميزات الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
-                            <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
+                            <button type="submit" id="publishBtn" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
                         </form>
                     </div>
 
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
-                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (اختر صورة أو فيديو من جهازك)</h4>
+                        <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (صورة أو فيديو تظهر لكل المستخدمين والزوار)</h4>
                         <div class="flex gap-2 items-center">
                             <input type="file" id="bgFile" accept="image/*,video/*" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm text-slate-300 file:bg-blue-600 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:cursor-pointer">
                             <button onclick="updateBackgroundFromFile()" class="bg-amber-600 hover:bg-amber-500 px-5 py-2.5 rounded-lg text-white text-sm font-bold transition">تحديث الخلفية</button>
@@ -170,6 +223,14 @@
                 </div>
             </div>
         </section>
+
+        <!-- موديل عرض الوسائط بالحجم الكامل -->
+        <div id="mediaModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="relative max-w-4xl w-full max-h-screen flex flex-col items-center justify-center">
+                <button onclick="closeMediaModal()" class="absolute top-4 right-4 bg-red-600 text-white w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center z-50 shadow-lg"><i class="fa-solid fa-xmark"></i></button>
+                <div id="modalMediaContent" class="w-full flex items-center justify-center p-2"></div>
+            </div>
+        </div>
 
         <!-- موديل تعديل الحساب -->
         <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
@@ -260,6 +321,8 @@
             const userInfo = document.getElementById('userInfo');
             const userName = document.getElementById('userName');
             const adminTabBtn = document.getElementById('adminTabBtn');
+            const adminOffersTabBtn = document.getElementById('adminOffersTabBtn');
+            const warrantyAdminEditContainer = document.getElementById('warrantyAdminEditContainer');
 
             if (user) {
                 loginBtn.classList.add('hidden');
@@ -268,26 +331,32 @@
 
                 if (user.email === ADMIN_EMAIL) {
                     adminTabBtn.classList.remove('hidden');
+                    adminOffersTabBtn.classList.remove('hidden');
+                    warrantyAdminEditContainer.classList.remove('hidden');
                 } else {
                     adminTabBtn.classList.add('hidden');
+                    adminOffersTabBtn.classList.add('hidden');
+                    warrantyAdminEditContainer.classList.add('hidden');
                 }
             } else {
                 loginBtn.classList.remove('hidden');
                 userInfo.classList.add('hidden');
                 adminTabBtn.classList.add('hidden');
+                adminOffersTabBtn.classList.add('hidden');
+                warrantyAdminEditContainer.classList.add('hidden');
             }
             loadSupportMessages();
         });
 
         function switchTab(tabName) {
-            ['storeTab', 'supportTab', 'adminTab'].forEach(t => {
+            ['storeTab', 'warrantyTab', 'submitOfferTab', 'supportTab', 'adminOffersTab', 'adminTab'].forEach(t => {
                 document.getElementById(t).classList.add('hidden');
             });
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
         }
 
         function readFileAsDataURL(fileInput) {
-            return Promise.all(Array.from(fileInput.files).map(file => {
+            return Promise.all(Array.from(fileInput.files).slice(0, 4).map(file => {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = (e) => resolve({ data: e.target.result, type: file.type });
@@ -297,8 +366,13 @@
             }));
         }
 
+        // إضافة حساب جديد للمتجر مع منع التكرار والتحويل الفوري
         async function addAdminAccount(e) {
             e.preventDefault();
+            const publishBtn = document.getElementById('publishBtn');
+            publishBtn.disabled = true;
+            publishBtn.textContent = 'جاري النشر...';
+
             const title = document.getElementById('accTitle').value;
             const price = document.getElementById('accPrice').value;
             const phone = document.getElementById('accPhone').value;
@@ -313,14 +387,175 @@
                 }).then(() => {
                     alert('تم نشر الحساب في المتجر بنجاح!');
                     document.getElementById('adminAddAccForm').reset();
+                    publishBtn.disabled = false;
+                    publishBtn.textContent = 'نشر الحساب في المتجر';
                     switchTab('store');
                 });
             } catch (err) {
                 alert('حدث خطأ أثناء تحميل الملفات: ' + err.message);
+                publishBtn.disabled = false;
+                publishBtn.textContent = 'نشر الحساب في المتجر';
             }
         }
 
-        // حفظ رابط الواتساب من لوحة الأدمن
+        // إرسال عرض حساب من المستخدم للأدمن
+        async function submitUserOffer(e) {
+            e.preventDefault();
+            if(!currentUser) {
+                alert('يرجى تسجيل الدخول بقوقل أولاً لعرض حسابك.');
+                return;
+            }
+
+            const title = document.getElementById('offerTitle').value;
+            const price = document.getElementById('offerPrice').value;
+            const phone = document.getElementById('offerPhone').value;
+            const desc = document.getElementById('offerDesc').value;
+
+            try {
+                const fileInput = document.getElementById('offerFiles');
+                const filesData = await readFileAsDataURL(fileInput);
+
+                db.ref('userOffers').push({
+                    title, price, phone, desc, mediaFiles: filesData,
+                    senderName: currentUser.displayName,
+                    senderEmail: currentUser.email,
+                    senderUid: currentUser.uid,
+                    timestamp: Date.now()
+                }).then(() => {
+                    alert('تم إرسال حسابك للأدمن بنجاح! سيتم مراجعته وعرضه في المتجر.');
+                    document.getElementById('submitOfferForm').reset();
+                    switchTab('store');
+                });
+            } catch (err) {
+                alert('خطأ في رفع الملفات: ' + err.message);
+            }
+        }
+
+        // جلب واستعراض عروض العملاء للأدمن
+        function loadUserOffers() {
+            db.ref('userOffers').on('value', (snapshot) => {
+                const grid = document.getElementById('adminOffersGrid');
+                const countBadge = document.getElementById('offersCount');
+                grid.innerHTML = '';
+                const data = snapshot.val();
+
+                if (data) {
+                    const keys = Object.keys(data);
+                    countBadge.textContent = keys.length;
+                    keys.reverse().forEach(key => {
+                        const offer = data[key];
+                        let mediaPreview = '';
+                        if(offer.mediaFiles && offer.mediaFiles.length > 0) {
+                            const first = offer.mediaFiles[0];
+                            if(first.type.includes('video')) {
+                                mediaPreview = `<video src="${first.data}" class="h-40 w-full object-cover rounded-lg"></video>`;
+                            } else {
+                                mediaPreview = `<img src="${first.data}" class="h-40 w-full object-cover rounded-lg">`;
+                            }
+                        }
+
+                        grid.innerHTML += `
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+                                ${mediaPreview}
+                                <div>
+                                    <h4 class="font-bold text-white">${offer.title}</h4>
+                                    <p class="text-xs text-slate-400">المرسل: ${offer.senderName} (${offer.senderEmail})</p>
+                                    <p class="text-xs text-slate-300 mt-1">${offer.desc}</p>
+                                    <p class="text-xs text-emerald-400 mt-1">السعر: ${offer.price} | للتواصل: ${offer.phone}</p>
+                                </div>
+                                <div class="flex gap-2 pt-2">
+                                    <button onclick='publishUserOfferToStore(${JSON.stringify(offer)})' class="flex-grow bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg text-xs font-bold text-white">نشر للمتجر</button>
+                                    <button onclick="deleteUserOffer('${key}')" class="bg-red-600 hover:bg-red-500 px-3 py-2 rounded-lg text-xs text-white">حذف</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    countBadge.textContent = '0';
+                    grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">لا توجد عروض حسابات من العملاء حالياً.</div>';
+                }
+            });
+        }
+
+        function publishUserOfferToStore(offer) {
+            db.ref('adminAccounts').push({
+                title: offer.title,
+                price: offer.price,
+                phone: offer.phone,
+                desc: offer.desc,
+                mediaFiles: offer.mediaFiles,
+                status: 'متاح',
+                timestamp: Date.now()
+            }).then(() => {
+                alert('تم نشر الحساب في المتجر بنجاح!');
+                db.ref(`userOffers`).orderByChild('title').equalTo(offer.title).once('value', snapshot => {
+                    snapshot.forEach(child => child.ref.remove());
+                });
+            });
+        }
+
+        function deleteUserOffer(key) {
+            if(confirm('هل أنت متأكد من حذف هذا العرض؟')) {
+                db.ref(`userOffers/${key}`).remove();
+            }
+        }
+
+        // حفظ وتحديث صفحة الضمان
+        function saveWarrantyContent() {
+            const text = document.getElementById('warrantyEditText').value;
+            db.ref('settings/warrantyText').set(text).then(() => {
+                alert('تم حفظ محتوى الضمان بنجاح!');
+            });
+        }
+
+        function loadWarrantyContent() {
+            db.ref('settings/warrantyText').on('value', (snapshot) => {
+                const text = snapshot.val() || 'نحن في AM Store نضمن لك كامل حقوقك المالية وحساباتنا مضمونة 100% وخالية من أي مشاكل. يتم تسليم الحساب فور تأكيد الدفع وإرسال الاسكرين شوت للأدمن.';
+                document.getElementById('warrantyContent').textContent = text;
+                const editInput = document.getElementById('warrantyEditText');
+                if(editInput) editInput.value = text;
+            });
+        }
+
+        // حفظ خلفية الموقع في Firebase لتظهر لكل المستخدمين والزوار
+        async function updateBackgroundFromFile() {
+            const fileInput = document.getElementById('bgFile');
+            if (fileInput.files.length === 0) {
+                alert('الرجاء اختيار صورة أو فيديو أولاً.');
+                return;
+            }
+            try {
+                const filesData = await readFileAsDataURL(fileInput);
+                const bg = filesData[0];
+                
+                db.ref('settings/siteBackground').set(bg).then(() => {
+                    applyBackground(bg);
+                    alert('تم تحديث خلفية الموقع لجميع المستخدمين والزوار بنجاح!');
+                });
+            } catch (err) {
+                alert('خطأ في تحميل الخلفية: ' + err.message);
+            }
+        }
+
+        function loadSavedBackground() {
+            db.ref('settings/siteBackground').on('value', (snapshot) => {
+                const bg = snapshot.val();
+                if (bg) {
+                    applyBackground(bg);
+                }
+            });
+        }
+
+        function applyBackground(bg) {
+            const container = document.getElementById('bgContainer');
+            if (bg.type.includes('video')) {
+                container.innerHTML = `<video autoplay muted loop id="bg-media" class="w-full h-full object-cover"><source src="${bg.data}" type="${bg.type}"></video>`;
+            } else {
+                container.innerHTML = `<div id="bg-media" class="w-full h-full object-cover" style="background: url('${bg.data}') no-repeat center center fixed; background-size: cover; width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1; opacity:0.25;"></div>`;
+            }
+        }
+
+        // حفظ رابط الواتساب
         function saveWhatsappGroup() {
             const url = document.getElementById('adminWhatsappInput').value;
             if(!url) {
@@ -332,7 +567,6 @@
             });
         }
 
-        // جلب واستعراض رابط الواتساب للعملاء والأدمن
         function loadWhatsappGroup() {
             db.ref('settings/whatsappGroup').on('value', (snapshot) => {
                 const url = snapshot.val();
@@ -346,6 +580,23 @@
                     btn.classList.add('hidden');
                 }
             });
+        }
+
+        // التحكم بعرض الوسائط وتكبيرها بالكامل
+        function openMediaModal(data, type) {
+            const modal = document.getElementById('mediaModal');
+            const content = document.getElementById('modalMediaContent');
+            if(type.includes('video')) {
+                content.innerHTML = `<video src="${data}" controls autoplay class="max-h-[85vh] w-auto rounded-xl shadow-2xl"></video>`;
+            } else {
+                content.innerHTML = `<img src="${data}" class="max-h-[85vh] w-auto rounded-xl shadow-2xl">`;
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeMediaModal() {
+            document.getElementById('mediaModal').classList.add('hidden');
+            document.getElementById('modalMediaContent').innerHTML = '';
         }
 
         function nextImage(accountId, direction) {
@@ -374,9 +625,9 @@
                 const currentMedia = account.mediaFiles[index];
                 const isVideo = currentMedia.type.includes('video');
                 if (isVideo) {
-                    container.innerHTML = `<video src="${currentMedia.data}" controls class="h-52 w-full object-cover"></video>`;
+                    container.innerHTML = `<video src="${currentMedia.data}" controls class="h-52 w-full object-cover cursor-pointer" onclick="openMediaModal('${currentMedia.data}', '${currentMedia.type}')"></video>`;
                 } else {
-                    container.innerHTML = `<img src="${currentMedia.data}" alt="${account.title}" class="h-52 w-full object-cover">`;
+                    container.innerHTML = `<img src="${currentMedia.data}" alt="${account.title}" class="h-52 w-full object-cover cursor-pointer" onclick="openMediaModal('${currentMedia.data}', '${currentMedia.type}')">`;
                 }
             }
         }
@@ -420,9 +671,9 @@
                     const isVideo = currentMedia.type.includes('video');
                     
                     if (isVideo) {
-                        mediaHtml = `<div id="media-container-${acc.id}"><video src="${currentMedia.data}" controls class="h-52 w-full object-cover"></video></div>`;
+                        mediaHtml = `<div id="media-container-${acc.id}"><video src="${currentMedia.data}" controls class="h-52 w-full object-cover cursor-pointer" onclick="openMediaModal('${currentMedia.data}', '${currentMedia.type}')"></video></div>`;
                     } else {
-                        mediaHtml = `<div id="media-container-${acc.id}"><img src="${currentMedia.data}" alt="${acc.title}" class="h-52 w-full object-cover"></div>`;
+                        mediaHtml = `<div id="media-container-${acc.id}"><img src="${currentMedia.data}" alt="${acc.title}" class="h-52 w-full object-cover cursor-pointer" onclick="openMediaModal('${currentMedia.data}', '${currentMedia.type}')"></div>`;
                     }
 
                     if (acc.mediaFiles.length > 1) {
@@ -448,12 +699,11 @@
                             <div class="text-accentGreen font-black text-sm pt-1">السعر: ${acc.price}</div>
                         </div>
                         <div class="p-4 pt-0 flex flex-wrap gap-2">
-                            <!-- زر التأكيد بالاسكرين شوت وتحويله للأدمن -->
                             <button onclick="confirmScreenshot('${acc.title}', '${acc.price}')" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition shadow-md flex items-center justify-center gap-1.5">
                                 <i class="fa-solid fa-camera"></i> تأكيد بالاسكرين شوت
                             </button>
                             ${isAdmin ? `
-                                <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                                <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i></button>
                                 <button onclick="toggleSoldStatus('${acc.id}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
                                 <button onclick="deleteAdminAccount('${acc.id}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
                             ` : ''}
@@ -489,7 +739,6 @@
             switchTab('support');
         }
 
-        // خصائص التعديل
         function openEditModal(id, title, price, phone, desc) {
             document.getElementById('editAccId').value = id;
             document.getElementById('editTitle').value = title;
@@ -526,44 +775,6 @@
         function deleteAdminAccount(key) {
             if(confirm('هل أنت متأكد من حذف هذا الحساب؟')) {
                 db.ref(`adminAccounts/${key}`).remove();
-            }
-        }
-
-        async function updateBackgroundFromFile() {
-            const fileInput = document.getElementById('bgFile');
-            if (fileInput.files.length === 0) {
-                alert('الرجاء اختيار صورة أو فيديو أولاً.');
-                return;
-            }
-            try {
-                const filesData = await readFileAsDataURL(fileInput);
-                const bg = filesData[0];
-                const container = document.getElementById('bgContainer');
-                
-                if (bg.type.includes('video')) {
-                    container.innerHTML = `<video autoplay muted loop id="bg-media" class="w-full h-full object-cover"><source src="${bg.data}" type="${bg.type}"></video>`;
-                } else {
-                    container.innerHTML = `<div id="bg-media" class="w-full h-full object-cover" style="background: url('${bg.data}') no-repeat center center fixed; background-size: cover; width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1; opacity:0.25;"></div>`;
-                }
-                
-                localStorage.setItem('amStoreBg', JSON.stringify(bg));
-                alert('تم تحديث خلفية الموقع بنجاح!');
-            } catch (err) {
-                alert('خطأ في تحميل الخلفية: ' + err.message);
-            }
-        }
-
-        function loadSavedBackground() {
-            const savedBg = localStorage.getItem('amStoreBg');
-            if (savedBg) {
-                const bg = JSON.parse(savedBg);
-                const container = document.getElementById('bgContainer');
-                
-                if (bg.type.includes('video')) {
-                    container.innerHTML = `<video autoplay muted loop id="bg-media" class="w-full h-full object-cover"><source src="${bg.data}" type="${bg.type}"></video>`;
-                } else {
-                    container.innerHTML = `<div id="bg-media" class="w-full h-full object-cover" style="background: url('${bg.data}') no-repeat center center fixed; background-size: cover; width:100%; height:100%; position:fixed; top:0; left:0; z-index:-1; opacity:0.25;"></div>`;
-                }
             }
         }
 
@@ -613,9 +824,9 @@
                             let mediaHtml = '';
                             if (msg.mediaUrl) {
                                 if (isVideo) {
-                                    mediaHtml = `<video src="${msg.mediaUrl}" controls class="max-h-40 rounded-lg mt-2"></video>`;
+                                    mediaHtml = `<video src="${msg.mediaUrl}" controls class="max-h-40 rounded-lg mt-2 cursor-pointer" onclick="openMediaModal('${msg.mediaUrl}', '${msg.mediaType}')"></video>`;
                                 } else {
-                                    mediaHtml = `<img src="${msg.mediaUrl}" class="max-h-40 rounded-lg mt-2">`;
+                                    mediaHtml = `<img src="${msg.mediaUrl}" class="max-h-40 rounded-lg mt-2 cursor-pointer" onclick="openMediaModal('${msg.mediaUrl}', '${msg.mediaType}')">`;
                                 }
                             }
 
@@ -645,6 +856,8 @@
             loadSavedBackground();
             loadStoreAccounts();
             loadWhatsappGroup();
+            loadWarrantyContent();
+            loadUserOffers();
         });
     </script>
 </body>
