@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حوده شوب - متجر حسابات بيس موبايل</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase App & Services (CDN Version لضمان عدم توقف السكريبت) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -36,7 +42,7 @@
             height: 100%;
             object-fit: cover;
             z-index: -1;
-            opacity: 0.2;
+            opacity: 0.25;
             transition: all 0.5s ease;
         }
         .card-hover:hover {
@@ -47,11 +53,12 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
+    <!-- خلفية الموقع المتحركة -->
     <video autoplay muted loop id="bg-media">
         <source src="https://assets.mixkit.co/videos/preview/mixkit-football-player-running-with-the-ball-41656-large.mp4" type="video/mp4">
     </video>
 
-    <!-- الهيدر -->
+    <!-- الهيدر (شريط التنقل العلوي) -->
     <header class="bg-cardBg/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('store')">
@@ -92,10 +99,10 @@
         </div>
     </header>
 
-    <!-- المحتوى -->
+    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
-        <!-- 1. المتجر الأساسي -->
+        <!-- 1. قسم المتجر الأساسي -->
         <section id="storeTab" class="space-y-6">
             <div class="text-center space-y-2">
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white"><span class="text-accentGreen">أقوى حسابات</span> eFootball Mobile</h1>
@@ -104,14 +111,14 @@
             <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
-        <!-- 2. المجتمع (مشاركة إنجازات اللاعبين) -->
+        <!-- 2. قسم المجتمع -->
         <section id="communityTab" class="hidden space-y-6 max-w-2xl mx-auto">
             <div class="bg-cardBg/90 backdrop-blur p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl">
                 <h3 class="font-bold mb-3 text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-pen-to-square"></i> شارك إنجازك أو حسابك مع المجتمع</h3>
                 <form id="postForm" onsubmit="createPost(event)" class="space-y-3">
-                    <input type="text" id="postTitle" placeholder="عنوان المنشور (مثلاً: حساب أساطير جبار)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="postTitle" placeholder="عنوان المنشور..." required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <textarea id="postDesc" placeholder="اكتب تفاصيل إنجازك أو حسابك..." rows="3" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500"></textarea>
-                    <input type="text" id="postImage" placeholder="رابط صورة أو فيديو الإنجاز (اختياري)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="postImage" placeholder="رابط صورة أو فيديو الحساب (اختياري)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-sm transition shadow-lg">نشر في المجتمع</button>
                 </form>
             </div>
@@ -136,19 +143,17 @@
             <div class="bg-cardBg/90 backdrop-blur p-6 rounded-2xl border border-amber-500/30 shadow-2xl">
                 <h3 class="text-xl font-black text-amber-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-gear"></i> لوحة تحكم الأدمن (حوده شوب)</h3>
                 <div class="space-y-5">
-                    <!-- إضافة حساب جديد -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> إضافة حساب أو فيديو جديد للمتجر</h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <input type="text" id="accTitle" placeholder="اسم الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <input type="text" id="accPrice" placeholder="السعر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <input type="text" id="accImg1" placeholder="رابط الصورة الأولى أو فيديو الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
+                            <input type="text" id="accImg1" placeholder="رابط صورة أو فيديو الحساب" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <input type="text" id="accPhone" placeholder="رقم التواصل أو النشر" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
-                            <textarea id="accDesc" placeholder="تفاصيل وحوش الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
+                            <textarea id="accDesc" placeholder="تفاصيل ومميزات الحساب..." required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2" rows="2"></textarea>
                             <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-lg sm:col-span-2 text-sm font-bold transition shadow-lg">نشر الحساب في المتجر</button>
                         </form>
                     </div>
-                    <!-- تغيير الخلفية المتحركة -->
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-image text-blue-400"></i> تغيير خلفية الموقع (فيديو أو صورة متحركة)</h4>
                         <div class="flex gap-2">
@@ -166,12 +171,8 @@
         جميع الحقوق محفوظة &copy; 2026 - حوده شوب لبيع حسابات بيس موبايل
     </footer>
 
-    <!-- السكربت البرمجي والفايربيس -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase/app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase/auth.js";
-        import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase/database.js";
-
+    <!-- سكربت التشغيل المتوافق (Firebase Compat SDKs) -->
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBMpZ7CXOJbgKpMqOjzsbbCcpHBlslU3mw",
             authDomain: "salah-52496.firebaseapp.com",
@@ -183,9 +184,9 @@
             measurementId: "G-4LJJ6M0YQY"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
 
         const ADMIN_EMAIL = "salaheldeen982@gmail.com";
         let currentUser = null;
@@ -196,7 +197,7 @@
             en: { store: "Store", community: "Community", support: "Support", admin: "Admin Panel", login: "Google Login" }
         };
 
-        window.toggleLanguage = function() {
+        function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             document.getElementById('langText').textContent = currentLang === 'ar' ? 'EN' : 'AR';
             document.getElementById('htmlRoot').setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
@@ -206,18 +207,18 @@
                 const key = el.getAttribute('data-translate');
                 if(translations[currentLang][key]) el.textContent = translations[currentLang][key];
             });
-        };
+        }
 
-        window.loginWithGoogle = function() {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).catch(error => alert("خطأ في تسجيل الدخول: " + error.message));
-        };
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(error => alert("خطأ في تسجيل الدخول: " + error.message));
+        }
 
-        window.logout = function() {
-            signOut(auth);
-        };
+        function logout() {
+            auth.signOut();
+        }
 
-        onAuthStateChanged(auth, (user) => {
+        auth.onAuthStateChanged((user) => {
             currentUser = user;
             const loginBtn = document.getElementById('loginBtn');
             const userInfo = document.getElementById('userInfo');
@@ -244,15 +245,15 @@
             loadSupportMessages();
         });
 
-        window.switchTab = function(tabName) {
+        function switchTab(tabName) {
             ['storeTab', 'communityTab', 'supportTab', 'adminTab'].forEach(t => {
                 document.getElementById(t).classList.add('hidden');
             });
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
-        };
+        }
 
-        // إضافة حساب جديد بواسطة الأدمن
-        window.addAdminAccount = function(e) {
+        // إضافة حساب جديد
+        function addAdminAccount(e) {
             e.preventDefault();
             const title = document.getElementById('accTitle').value;
             const price = document.getElementById('accPrice').value;
@@ -260,17 +261,17 @@
             const phone = document.getElementById('accPhone').value;
             const desc = document.getElementById('accDesc').value;
 
-            push(ref(db, 'adminAccounts'), {
+            db.ref('adminAccounts').push({
                 title, price, image: img1, phone, desc, status: 'متاح', timestamp: Date.now()
             }).then(() => {
                 alert('تم نشر الحساب في المتجر بنجاح!');
                 document.getElementById('adminAddAccForm').reset();
                 switchTab('store');
             });
-        };
+        }
 
         function loadStoreAccounts() {
-            onValue(ref(db, 'adminAccounts'), (snapshot) => {
+            db.ref('adminAccounts').on('value', (snapshot) => {
                 const grid = document.getElementById('adminAccountsGrid');
                 grid.innerHTML = '';
                 const data = snapshot.val();
@@ -311,32 +312,32 @@
             });
         }
 
-        window.payWithWallet = function(title, price) {
+        function payWithWallet(title, price) {
             alert(`تم طلب شراء حساب (${title}) بسعر (${price}). انتقل لخدمة العملاء وأرسل سكرين شوت الدفع لتأكيد الطلب.`);
             switchTab('support');
-        };
+        }
 
-        window.toggleSoldStatus = function(key, currentStatus) {
+        function toggleSoldStatus(key, currentStatus) {
             const newStatus = currentStatus === 'متاح' ? 'تم البيع' : 'متاح';
-            update(ref(db, `adminAccounts/${key}`), { status: newStatus });
-        };
+            db.ref(`adminAccounts/${key}`).update({ status: newStatus });
+        }
 
-        window.deleteAdminAccount = function(key) {
+        function deleteAdminAccount(key) {
             if(confirm('هل أنت متأكد من حذف هذا الحساب؟')) {
-                remove(ref(db, `adminAccounts/${key}`));
+                db.ref(`adminAccounts/${key}`).remove();
             }
-        };
+        }
 
-        window.updateBackground = function() {
+        function updateBackground() {
             const url = document.getElementById('bgInputUrl').value;
             if(url) {
                 document.getElementById('bg-media').src = url;
                 alert('تم تحديث خلفية الموقع بنجاح!');
             }
-        };
+        }
 
-        // قسم المجتمع
-        window.createPost = function(e) {
+        // المجتمع
+        function createPost(e) {
             e.preventDefault();
             if(!currentUser) {
                 alert('يجب تسجيل الدخول بقوقل أولاً لنشر إنجازك في المجتمع!');
@@ -346,7 +347,7 @@
             const desc = document.getElementById('postDesc').value;
             const image = document.getElementById('postImage').value;
 
-            push(ref(db, 'communityPosts'), {
+            db.ref('communityPosts').push({
                 title, desc, image,
                 author: currentUser.displayName,
                 uid: currentUser.uid,
@@ -356,10 +357,10 @@
                 alert('تم نشر إنجازك في المجتمع بنجاح!');
                 document.getElementById('postForm').reset();
             });
-        };
+        }
 
         function loadCommunityPosts() {
-            onValue(ref(db, 'communityPosts'), (snapshot) => {
+            db.ref('communityPosts').on('value', (snapshot) => {
                 const feed = document.getElementById('postsFeed');
                 feed.innerHTML = '';
                 const data = snapshot.val();
@@ -390,19 +391,19 @@
             });
         }
 
-        window.likePost = function(key, currentLikes) {
-            update(ref(db, `communityPosts/${key}`), { likes: currentLikes + 1 });
-        };
+        function likePost(key, currentLikes) {
+            db.ref(`communityPosts/${key}`).update({ likes: currentLikes + 1 });
+        }
 
         // خدمة العملاء
-        window.sendMessage = function(e) {
+        function sendMessage(e) {
             e.preventDefault();
             if(!currentUser) {
                 alert('يرجى تسجيل الدخول أولاً لإرسال رسالة أو سكرين شوت الدفع.');
                 return;
             }
             const text = document.getElementById('chatInput').value;
-            push(ref(db, 'supportMessages'), {
+            db.ref('supportMessages').push({
                 senderName: currentUser.displayName,
                 senderUid: currentUser.uid,
                 text,
@@ -410,10 +411,10 @@
             }).then(() => {
                 document.getElementById('chatInput').value = '';
             });
-        };
+        }
 
         function loadSupportMessages() {
-            onValue(ref(db, 'supportMessages'), (snapshot) => {
+            db.ref('supportMessages').on('value', (snapshot) => {
                 const chatBox = document.getElementById('chatMessages');
                 chatBox.innerHTML = '';
                 const data = snapshot.val();
