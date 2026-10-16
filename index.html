@@ -122,18 +122,6 @@
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white"><span class="text-accentGreen" data-translate="storeTitleHighlight">أقوى حسابات</span> eFootball Mobile</h1>
                 <p class="text-slate-400 text-xs sm:text-sm" data-translate="storeSubtitle">تصفح أقوى الحسابات المتاحة، وقم بشرائها وتأكيد الدفع عبر إرسال سكرين شوت للأدمن.</p>
             </div>
-            
-            <!-- شريط البحث برقم الحساب -->
-            <div class="max-w-md mx-auto bg-cardBg/90 backdrop-blur p-3 rounded-2xl border border-slate-800 shadow-xl flex gap-2">
-                <div class="relative flex-grow">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="accountSearchInput" oninput="filterStoreAccounts()" placeholder="ابحث برقم الحساب المميز..." class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 pr-10 pl-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                </div>
-                <button onclick="clearSearch()" class="bg-slate-800 hover:bg-slate-700 text-white px-4 rounded-xl text-xs font-bold transition">إلغاء</button>
-            </div>
-
             <div id="adminAccountsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             <div id="paginationControls" class="flex justify-center gap-2 mt-6 flex-wrap"></div>
         </section>
@@ -233,7 +221,6 @@
                     <div class="bg-slate-900/90 p-4 sm:p-5 rounded-xl border border-slate-800">
                         <h4 class="font-bold mb-3 text-sm text-slate-200 flex items-center gap-2"><i class="fa-solid fa-circle-plus text-emerald-400"></i> <span data-translate="addNewAccountTitle">إضافة حساب جديد للمتجر</span></h4>
                         <form id="adminAddAccForm" onsubmit="addAdminAccount(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input type="text" id="accNumber" placeholder="رقم الحساب المميز (مثال: 101)" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white sm:col-span-2">
                             <input type="text" id="accTitle" placeholder="اسم الحساب" data-translate-placeholder="accTitlePlaceholder" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <input type="text" id="accPrice" placeholder="السعر" data-translate-placeholder="pricePlaceholder" required class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-white">
                             <div class="sm:col-span-2 space-y-1">
@@ -271,10 +258,6 @@
                 <h3 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-pen-to-square"></i> <span data-translate="editAccountTitle">تعديل الحساب</span></h3>
                 <form id="editForm" class="space-y-4">
                     <input type="hidden" id="editAccId">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">رقم الحساب المميز</label>
-                        <input type="text" id="editAccNumber" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
-                    </div>
                     <div>
                         <label class="block text-sm text-slate-400 mb-1" data-translate="accTitlePlaceholder">اسم الحساب</label>
                         <input type="text" id="editTitle" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
@@ -518,16 +501,6 @@
             e.preventDefault();
             const publishBtn = document.getElementById('publishBtn');
             if(publishBtn.disabled) return;
-
-            const accNumber = document.getElementById('accNumber').value.trim();
-
-            // التحقق من عدم تكرار الرقم في الحسابات الموجودة
-            const exists = storeAccountsData.some(acc => acc.accNumber === accNumber);
-            if (exists) {
-                alert('هذا الرقم موجود بالفعل! يرجى اختيار رقم مميز آخر.');
-                return;
-            }
-
             publishBtn.disabled = true;
             publishBtn.textContent = 'جاري النشر...';
 
@@ -541,7 +514,7 @@
                 const filesData = await readFileAsDataURL(fileInput);
 
                 db.ref('adminAccounts').push({
-                    accNumber, title, price, mediaFiles: filesData, phone, desc, status: 'متاح', timestamp: Date.now()
+                    title, price, mediaFiles: filesData, phone, desc, status: 'متاح', timestamp: Date.now()
                 }).then(() => {
                     alert('تم نشر الحساب في المتجر بنجاح!');
                     document.getElementById('adminAddAccForm').reset();
@@ -654,7 +627,6 @@
             const desc = document.getElementById(`pubDesc_${key}`).value;
 
             db.ref('adminAccounts').push({
-                accNumber: 'بدون رقم',
                 title, price, phone, desc, mediaFiles,
                 status: 'متاح',
                 timestamp: Date.now()
@@ -939,6 +911,7 @@
             const chatBox = document.getElementById('chatMessages');
             if(!chatBox) return;
 
+            // منع تحميل أو إظهار الرسائل تماماً إذا لم يكن المستخدم مسجلاً للدخول
             if (!currentUser) {
                 chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">يرجى تسجيل الدخول لعرض المحادثة.</div>';
                 return;
@@ -1056,36 +1029,18 @@
             });
         }
 
-        function filterStoreAccounts() {
-            currentStorePage = 1;
-            renderStoreAccounts();
-            renderPaginationControls();
-        }
-
-        function clearSearch() {
-            document.getElementById('accountSearchInput').value = '';
-            filterStoreAccounts();
-        }
-
         function renderStoreAccounts() {
             const grid = document.getElementById('adminAccountsGrid');
             grid.innerHTML = '';
             
-            const searchQuery = document.getElementById('accountSearchInput') ? document.getElementById('accountSearchInput').value.trim().toLowerCase() : '';
-            
-            let filteredData = storeAccountsData;
-            if (searchQuery !== '') {
-                filteredData = storeAccountsData.filter(acc => acc.accNumber && acc.accNumber.toLowerCase().includes(searchQuery));
-            }
-
-            if (filteredData.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">لا توجد حسابات مطابقة للبحث حالياً.</div>';
+            if (storeAccountsData.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-10">لا توجد حسابات معروضة حالياً.</div>';
                 return;
             }
             
             const start = (currentStorePage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
-            const pageData = filteredData.slice(start, end);
+            const pageData = storeAccountsData.slice(start, end);
             const isAdmin = isAdminUser(currentUser);
 
             pageData.forEach(acc => {
@@ -1118,7 +1073,6 @@
                         <div class="relative group">
                             ${mediaHtml}
                             <span class="absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-bold ${isSold ? 'bg-red-500/80 text-white' : 'bg-emerald-500/80 text-white'}">${acc.status}</span>
-                            <span class="absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950">رقم: ${acc.accNumber || 'بدون'}</span>
                         </div>
                         <div class="p-4 space-y-2 flex-grow">
                             <h4 class="font-bold text-white text-base">${acc.title}</h4>
@@ -1131,7 +1085,7 @@
                                 <i class="fa-solid fa-camera"></i> تأكيد بالاسكرين شوت
                             </button>
                             ${isAdmin ? `
-                                <button onclick="openEditModal('${acc.id}', '${acc.accNumber \vert{}\vert{} ''}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="openEditModal('${acc.id}', '${acc.title}', '${acc.price}', '${acc.phone}', \`${acc.desc.replace(/'/g, "\\'")}\`)" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold"><i class="fa-solid fa-pen-to-square"></i></button>
                                 <button onclick="toggleSoldStatus('${acc.id}', '${acc.status}')" class="bg-amber-600 hover:bg-amber-500 px-3 py-2.5 rounded-xl text-xs text-white font-bold">الحالة</button>
                                 <button onclick="deleteAdminAccount('${acc.id}')" class="bg-red-600 hover:bg-red-500 px-3 py-2.5 rounded-xl text-xs text-white"><i class="fa-solid fa-trash"></i></button>
                             ` : ''}
@@ -1145,13 +1099,7 @@
             const controls = document.getElementById('paginationControls');
             controls.innerHTML = '';
             
-            const searchQuery = document.getElementById('accountSearchInput') ? document.getElementById('accountSearchInput').value.trim().toLowerCase() : '';
-            let filteredData = storeAccountsData;
-            if (searchQuery !== '') {
-                filteredData = storeAccountsData.filter(acc => acc.accNumber && acc.accNumber.toLowerCase().includes(searchQuery));
-            }
-
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const totalPages = Math.ceil(storeAccountsData.length / itemsPerPage);
             if (totalPages <= 1) return;
 
             for (let i = 1; i <= totalPages; i++) {
@@ -1173,9 +1121,8 @@
             switchTab('support');
         }
 
-        function openEditModal(id, accNumber, title, price, phone, desc) {
+        function openEditModal(id, title, price, phone, desc) {
             document.getElementById('editAccId').value = id;
-            document.getElementById('editAccNumber').value = accNumber;
             document.getElementById('editTitle').value = title;
             document.getElementById('editPrice').value = price;
             document.getElementById('editPhone').value = phone;
@@ -1190,20 +1137,12 @@
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('editAccId').value;
-            const accNumber = document.getElementById('editAccNumber').value.trim();
             const title = document.getElementById('editTitle').value;
             const price = document.getElementById('editPrice').value;
             const phone = document.getElementById('editPhone').value;
             const desc = document.getElementById('editDesc').value;
 
-            // التحقق من عدم التكرار أثناء التعديل (باستثناء الحساب الحالي)
-            const exists = storeAccountsData.some(acc => acc.id !== id && acc.accNumber === accNumber);
-            if (exists) {
-                alert('هذا الرقم موجود بالفعل لحساب آخر! يرجى اختيار رقم مختلف.');
-                return;
-            }
-
-            db.ref(`adminAccounts/${id}`).update({ accNumber, title, price, phone, desc }).then(() => {
+            db.ref(`adminAccounts/${id}`).update({ title, price, phone, desc }).then(() => {
                 alert('تم تعديل الحساب بنجاح!');
                 closeEditModal();
                 loadStoreAccounts();
