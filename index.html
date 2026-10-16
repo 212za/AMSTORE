@@ -149,7 +149,18 @@
             <div id="blockedWarning" class="hidden bg-red-600/20 border border-red-500 text-red-300 p-4 rounded-xl text-center font-bold text-sm">
                 عذراً، لقد تم حظرك من قبل الأدمن ولا يمكنك إرسال رسائل جديدة حالياً.
             </div>
-            <div class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
+            
+            <!-- رسالة تنبيه لغير المسجلين لمنع ظهور الشات والرسائل القديمة -->
+            <div id="supportLoginPrompt" class="hidden bg-slate-900/90 backdrop-blur p-8 rounded-2xl border border-slate-800 text-center space-y-4 shadow-xl">
+                <i class="fa-solid fa-lock text-emerald-400 text-4xl"></i>
+                <h3 class="font-bold text-lg text-white">يجب تسجيل الدخول بقوقل أولاً لعرض المحادثة والتواصل مع الأدمن</h3>
+                <p class="text-xs text-slate-400">لضمان الخصوصية، لا يمكن رؤية أو إرسال الرسائل إلا بعد تسجيل الدخول بحسابك.</p>
+                <button onclick="loginWithGoogle()" class="bg-white text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm inline-flex items-center gap-2 hover:bg-slate-100 transition shadow-md mx-auto">
+                    <i class="fa-brands fa-google text-red-500"></i> دخول بقوقل
+                </button>
+            </div>
+
+            <div id="supportContentContainer" class="bg-cardBg/90 backdrop-blur p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-xl">
                 <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
                     <h3 class="font-bold text-lg text-emerald-400 flex items-center gap-2"><i class="fa-solid fa-headset"></i> <span data-translate="supportTitle">التواصل مع الأدمن وتأكيد الدفع</span></h3>
                     <div id="adminUserControlBtns" class="hidden flex gap-2">
@@ -425,11 +436,16 @@
             const adminBlocksTabBtn = document.getElementById('adminBlocksTabBtn');
             const adminChatUsersList = document.getElementById('adminChatUsersList');
             const adminUserControlBtns = document.getElementById('adminUserControlBtns');
+            const supportLoginPrompt = document.getElementById('supportLoginPrompt');
+            const supportContentContainer = document.getElementById('supportContentContainer');
 
             if (user) {
                 loginBtn.classList.add('hidden');
                 userInfo.classList.remove('hidden');
                 userName.textContent = user.displayName;
+                
+                if(supportLoginPrompt) supportLoginPrompt.classList.add('hidden');
+                if(supportContentContainer) supportContentContainer.classList.remove('hidden');
 
                 if (isAdminUser(user)) {
                     adminTabBtn.classList.remove('hidden');
@@ -454,6 +470,9 @@
                 adminBlocksTabBtn.classList.add('hidden');
                 adminChatUsersList.classList.add('hidden');
                 adminUserControlBtns.classList.add('hidden');
+
+                if(supportLoginPrompt) supportLoginPrompt.classList.remove('hidden');
+                if(supportContentContainer) supportContentContainer.classList.add('hidden');
             }
             loadBlockedUsersMap();
             loadSupportMessages();
@@ -687,7 +706,6 @@
                     return;
                 }
 
-                // جلب اسماء المستخدمين من الشات لعرضها بشكل منظم
                 db.ref('supportMessages').once('value', (msgSnap) => {
                     const msgs = msgSnap.val() || {};
                     const userNames = {};
@@ -890,8 +908,16 @@
         }
 
         function loadSupportMessages() {
+            const chatBox = document.getElementById('chatMessages');
+            if(!chatBox) return;
+
+            // منع تحميل أو إظهار الرسائل تماماً إذا لم يكن المستخدم مسجلاً للدخول
+            if (!currentUser) {
+                chatBox.innerHTML = '<div class="text-center text-slate-500 py-10 text-xs">يرجى تسجيل الدخول لعرض المحادثة.</div>';
+                return;
+            }
+
             db.ref('supportMessages').on('value', (snapshot) => {
-                const chatBox = document.getElementById('chatMessages');
                 chatBox.innerHTML = '';
                 const data = snapshot.val();
                 const isAdmin = isAdminUser(currentUser);
